@@ -1,78 +1,74 @@
-using System;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.TestUtilities;
+using MySql.Data.MySqlClient;
 using Pomelo.EntityFrameworkCore.MySql.FunctionalTests.TestUtilities;
 using Xunit;
 
 namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests
 {
-    public class ReportedIssuesMySqlTest : IClassFixture<ReportedIssuesMySqlTest.ReportedIssuesMySqlFixture>
+    public class ReportedIssuesMySqlTest
+        : IClassFixture<ReportedIssuesMySqlTest.ReportedIssuesMySqlFixture>
     {
-        public ReportedIssuesMySqlTest(ReportedIssuesMySqlFixture fixture) => Fixture = fixture;
-
-        protected ReportedIssuesMySqlFixture Fixture { get; }
-        protected DbContext CreateContext() => Fixture.CreateContext();
-
         [ConditionalFact]
-        public virtual void TestIssue836()
+        public virtual void TestIssue831()
         {
             using var context = CreateContext();
 
-            var query = context.Set<VisuPropertyInstanceEntity>()
-                .ToArray();
+            context.Set<test1>()
+                .Add(new test1 {gender = "trans"});
 
-            Assert.Equal(2, query.Length);
-            Assert.Equal(query.First().PropertyTypeUuid, query.Last().PropertyTypeUuid);
+            var outerExpection = Assert.Throws<DbUpdateException>(() => context.SaveChanges());
+            var innerException = Assert.IsType<MySqlException>(outerExpection.InnerException);
+            Assert.Equal(
+                innerException.Message,
+                "Check constraint 'constraint_gender' is violated.");
         }
 
-        public class VisuPropertyInstanceEntity
+        public class test1
         {
-            public int Id { get; set; }
-            public Guid PropertyTypeUuid { get; set; }
-
-            public virtual PropertyTypeEntity PropertyType { get; set; }
-        }
-
-        public class PropertyTypeEntity
-        {
-            public Guid Uuid { get; set; }
+            public int id { get; set; }
+            public string gender { get; set; }
         }
 
         public class ReportedIssuesMySqlFixture : SharedStoreFixtureBase<PoolableDbContext>
         {
-            protected override ITestStoreFactory TestStoreFactory => MySqlTestStoreFactory.Instance;
-            protected override string StoreName { get; } = "CustomIssue";
-
-            protected override void OnModelCreating(ModelBuilder modelBuilder, DbContext context)
+            protected override void OnModelCreating(
+                ModelBuilder modelBuilder,
+                DbContext context)
             {
-                modelBuilder.Entity<PropertyTypeEntity>(entity =>
+                modelBuilder.Entity<test1>(entity =>
                 {
-                    entity.HasKey(e => e.Uuid);
-                });
+                    entity.HasKey(e => e.id);
 
-                modelBuilder.Entity<VisuPropertyInstanceEntity>(entity =>
-                {
-                    entity.HasKey(e => e.Id);
+                    entity.Property(e => e.gender)
+                        .HasMaxLength(6);
 
-                    entity.HasOne(e => e.PropertyType)
-                        .WithMany()
-                        .HasForeignKey(e => e.PropertyTypeUuid);
+                    entity.HasCheckConstraint(
+                        "constraint_gender",
+                        "`gender` = 'male' or `gender` = 'female'");
                 });
             }
 
             protected override void Seed(PoolableDbContext context)
             {
-                var propertyType = new PropertyTypeEntity { Uuid = Guid.NewGuid() };
-                context.Set<PropertyTypeEntity>().Add(propertyType);
-
-                context.Set<VisuPropertyInstanceEntity>().AddRange(
-                    new VisuPropertyInstanceEntity { PropertyTypeUuid = propertyType.Uuid },
-                    new VisuPropertyInstanceEntity { PropertyTypeUuid = propertyType.Uuid }
+                context.Set<test1>().AddRange(
+                    new test1 { gender = "male" },
+                    new test1 { gender = "female" }
                 );
 
                 context.SaveChanges();
             }
+
+            protected override ITestStoreFactory TestStoreFactory
+                => MySqlTestStoreFactory.Instance;
+
+            protected override string StoreName { get; } = "ReportedIssues";
         }
+
+        public ReportedIssuesMySqlTest(ReportedIssuesMySqlFixture fixture)
+            => Fixture = fixture;
+
+        protected ReportedIssuesMySqlFixture Fixture { get; }
+        protected DbContext CreateContext() => Fixture.CreateContext();
     }
 }
