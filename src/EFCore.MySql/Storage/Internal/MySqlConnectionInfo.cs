@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using MySql.Data.MySqlClient;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
@@ -7,39 +8,34 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage.Internal
 {
     public class MySqlConnectionInfo : IMySqlConnectionInfo
     {
-        private readonly ServerVersion _optionsServerVersion;
-        private ServerVersion _connectionServerVersion;
+        private readonly IMySqlOptions _options;
+        private ServerVersion _serverVersion;
 
-        public MySqlConnectionInfo(IMySqlOptions options)
+        public MySqlConnectionInfo([NotNull] IMySqlOptions options)
         {
-            _optionsServerVersion = options.ServerVersion;
+            _options = options;
         }
 
         /// <summary>
-        /// The actual ServerVersion of the connection or IMySqlOptions.ServerVersion,
+        /// The actual ServerVersion of the first opened connection or IMySqlOptions.ServerVersion,
         /// if the latter was set explicitly.
         /// </summary>
         /// <remarks>If the property is retrieved before the connection was opened, it
         /// returns the default ServerVersion of IMySqlOptions with the `IsDefault`
         /// property set to `true`.</remarks>
-        public ServerVersion ServerVersion
-        {
-            get => _connectionServerVersion ?? _optionsServerVersion;
-            internal set => _connectionServerVersion = value;
-        }
+        public virtual ServerVersion ServerVersion => _serverVersion ?? _options.ServerVersion;
 
-        internal static void SetServerVersion(MySqlConnection connection, IServiceProvider serviceProvider)
+        internal static void SetServerVersion(
+            [NotNull] MySqlConnection connection,
+            [NotNull] IServiceProvider serviceProvider)
         {
             var connectionInfo = (MySqlConnectionInfo)serviceProvider.GetRequiredService<IMySqlConnectionInfo>();
-            var options = serviceProvider.GetRequiredService<IMySqlOptions>();
 
-            if (options.ServerVersion.IsDefault)
+            if (connectionInfo._serverVersion == null)
             {
-                connectionInfo.ServerVersion = new ServerVersion(connection.ServerVersion);
-            }
-            else
-            {
-                connectionInfo.ServerVersion = options.ServerVersion;
+                connectionInfo._serverVersion = connectionInfo._options.ServerVersion.IsDefault
+                    ? new ServerVersion(connection.ServerVersion)
+                    : connectionInfo._options.ServerVersion;
             }
         }
     }
