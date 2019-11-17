@@ -105,7 +105,8 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage.Internal
         private readonly IMySqlOptions _options;
         private readonly IMySqlConnectionInfo _connectionInfo;
 
-        private bool _initialized;
+        private bool _initializedFromDefaultServerVersion;
+        private bool _initializedFromConnectionServerVersion;
 
         public MySqlTypeMappingSource(
             [NotNull] TypeMappingSourceDependencies dependencies,
@@ -118,7 +119,36 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage.Internal
             _connectionInfo = connectionInfo;
         }
 
-        protected void Initialize()
+        protected virtual void SetupMappings()
+        {
+            // If server version auto detection is being used, the database connection will
+            // be opened before the model is being created to ensure, that the actual server
+            // version is available here.
+            // However, it is theoretically possible, that a type mapping is being resolved before
+            // the model is being created.
+            // For those cases, this method ensures, that all mappings will be updated after
+            // the connection has been opened and before the model is being requested, to
+            // factor in the actual server version.
+
+            if (!_initializedFromDefaultServerVersion)
+            {
+                InitializeMappingsFromOptions();
+            }
+
+            // Can be executed twice: Once with the default ServerVersion still set and
+            // once with the connection specific (either as an explicit or as the auto detected)
+            // ServerVersion set.
+            if (!_initializedFromConnectionServerVersion &&
+                (!_initializedFromDefaultServerVersion || !_connectionInfo.ServerVersion.IsDefault))
+            {
+                InitializeMappingsFromConnectionInfo();
+                _initializedFromConnectionServerVersion = !_connectionInfo.ServerVersion.IsDefault;
+            }
+
+            _initializedFromDefaultServerVersion = true;
+        }
+
+        protected virtual void InitializeMappingsFromOptions()
         {
             //
             // String mappings depend on the MySqlOptions.NoBackslashEscapes setting:
@@ -141,73 +171,71 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage.Internal
                 = new Dictionary<string, RelationalTypeMapping>(StringComparer.OrdinalIgnoreCase)
                 {
                     // bit
-                    { "bit", _bit },
+                    {"bit", _bit},
 
                     // integers
-                    { "tinyint", _tinyint },
-                    { "tinyint unsigned", _utinyint },
-                    { "smallint", _smallint },
-                    { "smallint unsigned", _usmallint },
-                    { "mediumint", _int },
-                    { "mediumint unsigned", _uint },
-                    { "int", _int },
-                    { "int unsigned", _uint },
-                    { "bigint", _bigint },
-                    { "bigint unsigned", _ubigint },
+                    {"tinyint", _tinyint},
+                    {"tinyint unsigned", _utinyint},
+                    {"smallint", _smallint},
+                    {"smallint unsigned", _usmallint},
+                    {"mediumint", _int},
+                    {"mediumint unsigned", _uint},
+                    {"int", _int},
+                    {"int unsigned", _uint},
+                    {"bigint", _bigint},
+                    {"bigint unsigned", _ubigint},
 
                     // decimals
-                    { "decimal", _decimal },
-                    { "dec", _decimal },
-                    { "fixed", _decimal },
-                    { "double", _double },
-                    { "double precision", _double },
-                    { "real", _double },
-                    { "float", _float },
+                    {"decimal", _decimal},
+                    {"dec", _decimal},
+                    {"fixed", _decimal},
+                    {"double", _double},
+                    {"double precision", _double},
+                    {"real", _double},
+                    {"float", _float},
 
                     // binary
-                    { "binary", _binary },
-                    { "varbinary", _varbinary },
-                    { "tinyblob", _varbinary },
-                    { "blob", _varbinary },
-                    { "mediumblob", _varbinary },
-                    { "longblob", _varbinary },
+                    {"binary", _binary},
+                    {"varbinary", _varbinary},
+                    {"tinyblob", _varbinary},
+                    {"blob", _varbinary},
+                    {"mediumblob", _varbinary},
+                    {"longblob", _varbinary},
 
                     // string
-                    { "char", _charUnicode },
-                    { "varchar", _varcharUnicode },
-                    { "tinytext", _varcharmaxUnicode },
-                    { "text", _varcharmaxUnicode },
-                    { "mediumtext", _varcharmaxUnicode },
-                    { "longtext", _varcharmaxUnicode },
-
-                    { "enum", _enum },
-
-                    { "nchar", _nchar },
-                    { "nvarchar", _nvarchar },
+                    {"char", _charUnicode},
+                    {"varchar", _varcharUnicode},
+                    {"tinytext", _varcharmaxUnicode},
+                    {"text", _varcharmaxUnicode},
+                    {"mediumtext", _varcharmaxUnicode},
+                    {"longtext", _varcharmaxUnicode},
+                    {"enum", _enum},
+                    {"nchar", _nchar},
+                    {"nvarchar", _nvarchar},
 
                     // DateTime
-                    { "date", _date }
+                    {"date", _date}
                 };
 
             _clrTypeMappings
                 = new Dictionary<Type, RelationalTypeMapping>
                 {
-	                // integers
-	                { typeof(short), _smallint },
-                    { typeof(ushort), _usmallint },
-                    { typeof(int), _int },
-                    { typeof(uint), _uint },
-                    { typeof(long), _bigint },
-                    { typeof(ulong), _ubigint },
+                    // integers
+                    {typeof(short), _smallint},
+                    {typeof(ushort), _usmallint},
+                    {typeof(int), _int},
+                    {typeof(uint), _uint},
+                    {typeof(long), _bigint},
+                    {typeof(ulong), _ubigint},
 
-	                // decimals
-	                { typeof(decimal), _decimal },
-                    { typeof(float), _float },
-                    { typeof(double), _double },
+                    // decimals
+                    {typeof(decimal), _decimal},
+                    {typeof(float), _float},
+                    {typeof(double), _double},
 
-	                // byte / char
-	                { typeof(sbyte), _tinyint },
-                    { typeof(byte), _utinyint },
+                    // byte / char
+                    {typeof(sbyte), _tinyint},
+                    {typeof(byte), _utinyint},
                 };
 
             // Boolean
@@ -218,6 +246,18 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage.Internal
                     : _tinyint1;
             }
 
+            // Guid
+            if (_guid != null)
+            {
+                _clrTypeMappings[typeof(Guid)] = _guid;
+            }
+
+            // Type mappings that only exist to work around the limited code generation capabilites when scaffolding:
+            _scaffoldingClrTypeMappings = new Dictionary<Type, RelationalTypeMapping> { { typeof(MySqlCodeGenerationMemberAccess), _codeGenerationMemberAccess } };
+        }
+
+        protected virtual void InitializeMappingsFromConnectionInfo()
+        {
             // DateTime
             _storeTypeMappings["time"] = !_connectionInfo.ServerVersion.SupportsDateTime6 ||
                                          _options.DefaultDataTypeMappings.ClrTimeSpan == MySqlTimeSpanType.Time
@@ -242,18 +282,6 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage.Internal
                 : _options.DefaultDataTypeMappings.ClrDateTimeOffset == MySqlDateTimeType.Timestamp6
                     ? _timeStampOffset6
                     : _dateTimeOffset6;
-
-            // Guid
-            if (_guid != null)
-            {
-                _clrTypeMappings[typeof(Guid)] = _guid;
-            }
-
-            // Type mappings that only exist to work around the limited code generation capabilites when scaffolding:
-            _scaffoldingClrTypeMappings = new Dictionary<Type, RelationalTypeMapping>
-            {
-                { typeof(MySqlCodeGenerationMemberAccess), _codeGenerationMemberAccess }
-            };
         }
 
         /// <summary>
@@ -283,11 +311,7 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage.Internal
         {
             // Use deferred initialization to support connection (string) based type mapping in
             // design time mode (scaffolder etc.).
-            if (!_initialized)
-            {
-                Initialize();
-                _initialized = true;
-            }
+            SetupMappings();
 
             var clrType = mappingInfo.ClrType;
             var storeTypeName = mappingInfo.StoreTypeName;
@@ -312,7 +336,7 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage.Internal
                         }
                     }
                 }
-                
+
                 if (MySqlGuidTypeMapping.IsValidGuidFormat(_options.ConnectionSettings.GuidFormat))
                 {
                     if (storeTypeName.Equals(_guid.StoreType, StringComparison.OrdinalIgnoreCase)

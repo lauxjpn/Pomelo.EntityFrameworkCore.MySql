@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
 using Pomelo.EntityFrameworkCore.MySql.Diagnostics.Internal;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Migrations;
 using Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Query.Internal;
@@ -59,6 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .TryAdd<IRelationalSqlTranslatingExpressionVisitorFactory, MySqlSqlTranslatingExpressionVisitorFactory>()
                 .TryAdd<IQueryTranslationPostprocessorFactory, MySqlQueryTranslationPostprocessorFactory>()
                 .TryAdd<IMigrationsModelDiffer, MySqlMigrationsModelDiffer>()
+                .TryAdd<IModelSource, MySqlModelSource>()
                 .TryAddProviderSpecificServices(m => m
                     .TryAddSingleton<IMySqlOptions, MySqlOptions>()
                     .TryAddSingleton<IMySqlConnectionInfo, MySqlConnectionInfo>()
