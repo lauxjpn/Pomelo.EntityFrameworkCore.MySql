@@ -4,8 +4,21 @@ using Xunit;
 
 namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.TestUtilities.Attributes
 {
-    public sealed class SupportedServerVersionLessThanFactAttribute : FactAttribute
+    public class SupportedServerVersionLessThanFactAttribute : FactAttribute
     {
+        private readonly ServerVersionSupport _serverVersionSupport;
+        private string _skip;
+
+        public virtual string Unsupported { get; set; }
+
+        public override string Skip
+        {
+            get => !IsSupported() && string.IsNullOrEmpty(_skip)
+                ? Unsupported ?? $"Test is supported only on server versions lower than {_serverVersionSupport}."
+                : _skip;
+            set => _skip = value;
+        }
+
         public SupportedServerVersionLessThanFactAttribute(params string[] versionsOrKeys)
             : this(ServerVersion.GetSupport(versionsOrKeys))
         {
@@ -13,12 +26,10 @@ namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.TestUtilities.Attribu
 
         private SupportedServerVersionLessThanFactAttribute(ServerVersionSupport serverVersionSupport)
         {
-            var currentVersion = AppConfig.ServerVersion;
-
-            if (serverVersionSupport.IsSupported(currentVersion) && string.IsNullOrEmpty(Skip))
-            {
-                Skip = $"Test is supported only on server versions lower than {serverVersionSupport}.";
-            }
+            _serverVersionSupport = serverVersionSupport;
         }
+
+        private bool IsSupported()
+            => !(_serverVersionSupport?.IsSupported(AppConfig.ServerVersion) ?? true);
     }
 }
