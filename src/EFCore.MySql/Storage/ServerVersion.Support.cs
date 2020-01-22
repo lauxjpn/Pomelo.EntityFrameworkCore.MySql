@@ -56,6 +56,9 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage
         // public const string AlternativeDefaultExpressionMySqlSupportVersionString = "?.?.?-mysql";
         public const string AlternativeDefaultExpressionMariaDbSupportVersionString = "10.2.7-mariadb"; // MDEV-13132
 
+        public const string Bugfix96946OuterReferenceInJoinConditionMySqlSupportVersionString = "8.0.20-mysql";
+        // public const string Bugfix96946OuterReferenceInJoinConditionMariaDbSupportVersionString = "?.?.?-mysql";
+
         #endregion
 
         #region SupportMap keys for test attributes
@@ -76,6 +79,7 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage
         public const string DefaultCharSetUtf8Mb4SupportKey = nameof(DefaultCharSetUtf8Mb4SupportKey);
         public const string DefaultExpressionSupportKey = nameof(DefaultExpressionSupportKey);
         public const string AlternativeDefaultExpressionSupportKey = nameof(AlternativeDefaultExpressionSupportKey);
+        public const string Bugfix96946OuterReferenceInJoinConditionSupportKey = nameof(Bugfix96946OuterReferenceInJoinConditionSupportKey);
 
         #endregion
 
@@ -96,6 +100,7 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage
             { DefaultCharSetUtf8Mb4SupportKey, new ServerVersionSupport(DefaultCharSetUtf8Mb4MySqlSupportVersionString/*, DefaultCharSetUtf8Mb4MariaDbSupportVersionString*/) },
             { DefaultExpressionSupportKey, new ServerVersionSupport(DefaultExpressionMySqlSupportVersionString/*, DefaultExpressionMariaDbSupportVersionString*/) },
             { AlternativeDefaultExpressionSupportKey, new ServerVersionSupport(/*AlternativeDefaultExpressionMySqlSupportVersionString, */AlternativeDefaultExpressionMariaDbSupportVersionString) },
+            { Bugfix96946OuterReferenceInJoinConditionSupportKey, new ServerVersionSupport(Bugfix96946OuterReferenceInJoinConditionMySqlSupportVersionString/*, Bugfix96946OuterReferenceInJoinConditionMariaDbSupportVersionString*/)}
         };
 
         #region Support checks for provider code
@@ -116,6 +121,7 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage
         public virtual bool SupportsDefaultCharSetUtf8Mb4 => SupportMap[DefaultCharSetUtf8Mb4SupportKey].IsSupported(this);
         public virtual bool SupportsDefaultExpression => SupportMap[DefaultExpressionSupportKey].IsSupported(this);
         public virtual bool SupportsAlternativeDefaultExpression => SupportMap[AlternativeDefaultExpressionSupportKey].IsSupported(this);
+        public virtual bool SupportsBugfix96946OuterReferenceInJoinCondition => SupportMap[Bugfix96946OuterReferenceInJoinConditionSupportKey].IsSupported(this);
 
         #endregion
 

@@ -383,21 +383,21 @@ namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.Query
             return base.Correlated_collections_inner_subquery_selector_references_outer_qsre(isAsync);
         }
 
-        [SupportedServerVersionTheory(ServerVersion.OuterApplySupportKey, Skip = "https://bugs.mysql.com/bug.php?id=96946")]
+        [SupportedServerVersionTheory(ServerVersion.Bugfix96946OuterReferenceInJoinConditionSupportKey, Unsupported = "https://bugs.mysql.com/bug.php?id=96946")]
         [MemberData(nameof(IsAsyncData))]
         public override Task Outer_parameter_in_join_key_inner_and_outer(bool isAsync)
         {
             return base.Outer_parameter_in_join_key_inner_and_outer(isAsync);
         }
 
-        [SupportedServerVersionTheory(ServerVersion.OuterApplySupportKey, Skip = "https://bugs.mysql.com/bug.php?id=96946")]
+        [SupportedServerVersionTheory(ServerVersion.Bugfix96946OuterReferenceInJoinConditionSupportKey, Unsupported = "https://bugs.mysql.com/bug.php?id=96946")]
         [MemberData(nameof(IsAsyncData))]
         public override Task Outer_parameter_in_group_join_with_DefaultIfEmpty(bool isAsync)
         {
             return base.Outer_parameter_in_group_join_with_DefaultIfEmpty(isAsync);
         }
 
-        [SupportedServerVersionTheory(ServerVersion.OuterApplySupportKey, Skip = "https://bugs.mysql.com/bug.php?id=96946")]
+        [SupportedServerVersionTheory(ServerVersion.Bugfix96946OuterReferenceInJoinConditionSupportKey, Unsupported = "https://bugs.mysql.com/bug.php?id=96946")]
         [MemberData(nameof(IsAsyncData))]
         public override Task Outer_parameter_in_join_key(bool isAsync)
         {
@@ -466,7 +466,7 @@ namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.Query
         {
             return base.Where_subquery_distinct_singleordefault_boolean_with_pushdown(isAsync);
         }
-        
+
         [SupportedServerVersionTheory(ServerVersion.OuterApplySupportKey)]
         [MemberData(nameof(IsAsyncData))]
         public override Task Correlated_collections_nested_inner_subquery_references_outer_qsre_one_level_up(bool isAsync)

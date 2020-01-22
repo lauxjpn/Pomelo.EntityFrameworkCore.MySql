@@ -23,7 +23,10 @@ namespace Pomelo.EntityFrameworkCore.MySql.Storage
                 return false;
             }
 
-            return SupportedServerVersions.Any(s => serverVersion.Type == s.Type && serverVersion.Version >= s.Version);
+            return SupportedServerVersions
+                       .Where(s => serverVersion.Type == s.Type)
+                       .OrderByDescending(s => s.Version)
+                       .FirstOrDefault()?.Version != null;
         }
 
         public override string ToString()
