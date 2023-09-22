@@ -22,11 +22,11 @@ namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.Query
 
         AssertSql(
 """
-@__ef_filter__TenantPrefix_0='B' (Size = 40)
+@__ef_filter__TenantPrefix_0_rewritten='B%' (Size = 40)
 
 SELECT COUNT(*)
 FROM `Customers` AS `c`
-WHERE LEFT(`c`.`CompanyName`, CHAR_LENGTH(@__ef_filter__TenantPrefix_0)) = @__ef_filter__TenantPrefix_0
+WHERE `c`.`CompanyName` LIKE @__ef_filter__TenantPrefix_0_rewritten
 """);
         }
 
