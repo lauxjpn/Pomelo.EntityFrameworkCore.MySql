@@ -13056,11 +13056,12 @@ WHERE NOT EXISTS (
 """);
     }
 
+    [SupportedServerVersionCondition(nameof(ServerVersionSupport.LimitWithNonConstantValueSupport))]
     public override async Task Where_subquery_with_ElementAt_using_column_as_index(bool async)
     {
         await base.Where_subquery_with_ElementAt_using_column_as_index(async);
 
-        AssertSql();
+        AssertSql("");
     }
 
     public override async Task Using_indexer_on_byte_array_and_string_in_projection(bool async)

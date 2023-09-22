@@ -242,7 +242,15 @@ WHERE `m`.`Timeline` > (UTC_TIMESTAMP() - @__timeSpan_0)
         {
             await base.Group_by_on_StartsWith_with_null_parameter_as_argument(async);
 
-            AssertSql("");
+            AssertSql(
+"""
+SELECT `t`.`Key`
+FROM (
+    SELECT FALSE AS `Key`
+    FROM `Gears` AS `g`
+) AS `t`
+GROUP BY `t`.`Key`
+""");
         }
 
         public override async Task Array_access_on_byte_array(bool async)
@@ -303,14 +311,24 @@ ORDER BY `g`.`Nickname`, `g`.`SquadId`, `s`.`Id`, `s1`.`SquadId`
         {
             await base.Group_by_with_having_StartsWith_with_null_parameter_as_argument(async);
 
-            AssertSql("");
+            AssertSql(
+"""
+SELECT `g`.`FullName`
+FROM `Gears` AS `g`
+GROUP BY `g`.`FullName`
+HAVING FALSE
+""");
         }
 
         public override async Task Select_StartsWith_with_null_parameter_as_argument(bool async)
         {
             await base.Select_StartsWith_with_null_parameter_as_argument(async);
 
-            AssertSql("");
+            AssertSql(
+"""
+SELECT FALSE
+FROM `Gears` AS `g`
+""");
         }
 
         [SupportedServerVersionCondition(nameof(ServerVersionSupport.LimitWithNonConstantValueSupport))]

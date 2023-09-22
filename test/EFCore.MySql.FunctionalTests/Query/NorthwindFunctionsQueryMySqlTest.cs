@@ -524,12 +524,14 @@ WHERE `c`.`ContactName` LIKE '%     %'");
         {
             await base.String_Contains_parameter_with_whitespace(async);
 
-            AssertSql(
-                $@"@__pattern_0='     ' (Size = 30)
+        AssertSql(
+"""
+@__pattern_0_rewritten='%     %' (Size = 30)
 
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
-WHERE (@__pattern_0 LIKE '') OR (LOCATE(@__pattern_0, `c`.`ContactName`) > 0)");
+WHERE `c`.`ContactName` LIKE @__pattern_0_rewritten
+""");
         }
 
         public override async Task String_LastOrDefault_MethodCall(bool async)
@@ -1718,11 +1720,11 @@ WHERE (`o`.`CustomerID` = 'ALFKI') AND ((CAST(`o`.`OrderDate` AS char) LIKE '%19
 
         AssertSql(
 """
-@__pattern_0='M' (Size = 30)
+@__pattern_0_rewritten='M%' (Size = 30)
 
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
-WHERE LEFT(`c`.`ContactName`, CHAR_LENGTH(@__pattern_0)) = @__pattern_0
+WHERE `c`.`ContactName` LIKE @__pattern_0_rewritten
 """);
         }
 
@@ -1732,11 +1734,11 @@ WHERE LEFT(`c`.`ContactName`, CHAR_LENGTH(@__pattern_0)) = @__pattern_0
 
         AssertSql(
 """
-@__pattern_0='b' (Size = 30)
+@__pattern_0_rewritten='%b' (Size = 30)
 
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
-WHERE RIGHT(`c`.`ContactName`, CHAR_LENGTH(@__pattern_0)) = @__pattern_0
+WHERE `c`.`ContactName` LIKE @__pattern_0_rewritten
 """);
         }
 
