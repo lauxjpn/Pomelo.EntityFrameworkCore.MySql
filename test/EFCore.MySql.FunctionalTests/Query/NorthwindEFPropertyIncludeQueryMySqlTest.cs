@@ -147,7 +147,7 @@ ORDER BY `t`.`c` DESC, `t`.`CustomerID`
 SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`, `o0`.`OrderID`, `o0`.`ProductID`, `o0`.`Discount`, `o0`.`Quantity`, `o0`.`UnitPrice`
 FROM `Orders` AS `o`
 LEFT JOIN `Order Details` AS `o0` ON `o`.`OrderID` = `o0`.`OrderID`
-WHERE `o`.`CustomerID` IS NOT NULL AND (`o`.`CustomerID` LIKE 'F%')
+WHERE `o`.`CustomerID` LIKE 'F%'
 ORDER BY `o`.`OrderID`, `o0`.`OrderID`
 """);
     }
@@ -247,7 +247,7 @@ SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`, `c`.`
 FROM `Orders` AS `o`
 LEFT JOIN `Customers` AS `c` ON `o`.`CustomerID` = `c`.`CustomerID`
 LEFT JOIN `Orders` AS `o0` ON `c`.`CustomerID` = `o0`.`CustomerID`
-WHERE `o`.`CustomerID` IS NOT NULL AND (`o`.`CustomerID` LIKE 'F%')
+WHERE `o`.`CustomerID` LIKE 'F%'
 ORDER BY `o`.`OrderID`, `c`.`CustomerID`
 """);
     }
@@ -1171,7 +1171,7 @@ ORDER BY `t`.`c`, `t`.`c0`, `t`.`OrderID`, `t`.`CustomerID0`, `o0`.`OrderID`
 SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`, `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Orders` AS `o`
 LEFT JOIN `Customers` AS `c` ON `o`.`CustomerID` = `c`.`CustomerID`
-WHERE `o`.`CustomerID` IS NOT NULL AND (`o`.`CustomerID` LIKE 'F%')
+WHERE `o`.`CustomerID` LIKE 'F%'
 """);
     }
 
@@ -1549,7 +1549,7 @@ ORDER BY `t1`.`CustomerID`, `t1`.`CustomerID0`, `o0`.`OrderID`
 SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`, `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Orders` AS `o`
 LEFT JOIN `Customers` AS `c` ON `o`.`CustomerID` = `c`.`CustomerID`
-WHERE `o`.`CustomerID` IS NOT NULL AND (`o`.`CustomerID` LIKE 'F%')
+WHERE `o`.`CustomerID` LIKE 'F%'
 """);
     }
 
@@ -1779,7 +1779,7 @@ SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`, `c`.`
 FROM `Orders` AS `o`
 LEFT JOIN `Customers` AS `c` ON `o`.`CustomerID` = `c`.`CustomerID`
 LEFT JOIN `Order Details` AS `o0` ON `o`.`OrderID` = `o0`.`OrderID`
-WHERE `o`.`CustomerID` IS NOT NULL AND (`o`.`CustomerID` LIKE 'F%')
+WHERE `o`.`CustomerID` LIKE 'F%'
 ORDER BY `o`.`OrderID`, `c`.`CustomerID`, `o0`.`OrderID`
 """);
     }
@@ -1908,7 +1908,7 @@ SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`, `c`.`
 FROM `Orders` AS `o`
 LEFT JOIN `Customers` AS `c` ON `o`.`CustomerID` = `c`.`CustomerID`
 LEFT JOIN `Order Details` AS `o0` ON `o`.`OrderID` = `o0`.`OrderID`
-WHERE `o`.`CustomerID` IS NOT NULL AND (`o`.`CustomerID` LIKE 'F%')
+WHERE `o`.`CustomerID` LIKE 'F%'
 ORDER BY `o`.`OrderID`, `c`.`CustomerID`, `o0`.`OrderID`
 """);
     }
@@ -1979,7 +1979,7 @@ SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`, `c`.`
 FROM `Orders` AS `o`
 LEFT JOIN `Customers` AS `c` ON `o`.`CustomerID` = `c`.`CustomerID`
 LEFT JOIN `Orders` AS `o0` ON `c`.`CustomerID` = `o0`.`CustomerID`
-WHERE `o`.`CustomerID` IS NOT NULL AND (`o`.`CustomerID` LIKE 'F%')
+WHERE `o`.`CustomerID` LIKE 'F%'
 ORDER BY `o`.`OrderID`, `c`.`CustomerID`
 """);
     }
@@ -2275,6 +2275,21 @@ ORDER BY `c`.`CustomerID`, `t`.`OrderDate` DESC
         await base.Include_collection_with_client_filter(async);
 
         AssertSql();
+    }
+
+    public override async Task Outer_identifier_correctly_determined_when_doing_include_on_right_side_of_left_join(bool async)
+    {
+        await base.Outer_identifier_correctly_determined_when_doing_include_on_right_side_of_left_join(async);
+
+        AssertSql(
+"""
+SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`, `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`, `o0`.`OrderID`, `o0`.`ProductID`, `o0`.`Discount`, `o0`.`Quantity`, `o0`.`UnitPrice`
+FROM `Customers` AS `c`
+LEFT JOIN `Orders` AS `o` ON `c`.`CustomerID` = `o`.`CustomerID`
+LEFT JOIN `Order Details` AS `o0` ON `o`.`OrderID` = `o0`.`OrderID`
+WHERE `c`.`City` = 'Seattle'
+ORDER BY `c`.`CustomerID`, `o`.`OrderID`, `o0`.`OrderID`
+""");
     }
 
     private void AssertSql(params string[] expected)
