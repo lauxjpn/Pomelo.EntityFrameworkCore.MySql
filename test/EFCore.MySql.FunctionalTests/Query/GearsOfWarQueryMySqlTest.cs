@@ -331,7 +331,7 @@ FROM `Gears` AS `g`
 """);
         }
 
-        [SupportedServerVersionCondition(nameof(ServerVersionSupport.LimitWithNonConstantValueSupport))]
+        [SupportedServerVersionCondition(nameof(ServerVersionSupport.LimitWithNonConstantValue))]
         public override async Task Where_subquery_with_ElementAt_using_column_as_index(bool async)
         {
             await base.Where_subquery_with_ElementAt_using_column_as_index(async);
