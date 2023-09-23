@@ -89,6 +89,7 @@ namespace Microsoft.EntityFrameworkCore
             public override bool CommonTableExpressions => ServerVersion.Version >= new Version(8, 0, 1);
             public override bool LimitWithinInAllAnySomeSubquery => false;
             public override bool LimitWithNonConstantValue => false;
+            public override bool JsonTable => ServerVersion.Version >= new Version(8, 0, 4);
         }
     }
 }

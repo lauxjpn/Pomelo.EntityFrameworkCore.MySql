@@ -89,5 +89,6 @@ namespace Pomelo.EntityFrameworkCore.MySql.Infrastructure
         public virtual bool CommonTableExpressions => false;
         public virtual bool LimitWithinInAllAnySomeSubquery => false;
         public virtual bool LimitWithNonConstantValue => false;
+        public virtual bool JsonTable => false;
     }
 }
