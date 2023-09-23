@@ -28,7 +28,7 @@ namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.Query
         {
             await base.String_StartsWith_Literal(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
@@ -41,11 +41,11 @@ WHERE `c`.`ContactName` LIKE 'M%'
         {
             await base.String_StartsWith_Identity(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
-WHERE (LEFT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactName`) OR `c`.`ContactName` IS NULL
+WHERE `c`.`ContactName` IS NOT NULL AND (LEFT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactName`)
 """);
         }
 
@@ -54,11 +54,11 @@ WHERE (LEFT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactNam
         {
             await base.String_StartsWith_Column(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
-WHERE (LEFT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactName`) OR `c`.`ContactName` IS NULL
+WHERE `c`.`ContactName` IS NOT NULL AND (LEFT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactName`)
 """);
         }
 
@@ -67,7 +67,7 @@ WHERE (LEFT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactNam
         {
             await base.String_StartsWith_MethodCall(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
@@ -80,7 +80,7 @@ WHERE `c`.`ContactName` LIKE 'M%'
         {
             await base.String_EndsWith_Literal(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
@@ -93,11 +93,11 @@ WHERE `c`.`ContactName` LIKE '%b'
         {
             await base.String_EndsWith_Identity(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
-WHERE (RIGHT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactName`) OR `c`.`ContactName` IS NULL
+WHERE `c`.`ContactName` IS NOT NULL AND (RIGHT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactName`)
 """);
         }
 
@@ -106,11 +106,11 @@ WHERE (RIGHT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactNa
         {
             await base.String_EndsWith_Column(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
-WHERE (RIGHT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactName`) OR `c`.`ContactName` IS NULL
+WHERE `c`.`ContactName` IS NOT NULL AND (RIGHT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactName`)
 """);
         }
 
@@ -119,7 +119,7 @@ WHERE (RIGHT(`c`.`ContactName`, CHAR_LENGTH(`c`.`ContactName`)) = `c`.`ContactNa
         {
             await base.String_EndsWith_MethodCall(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
@@ -144,9 +144,11 @@ WHERE `c`.`ContactName` LIKE '%M%'");
             await base.String_Contains_Identity(async);
 
             AssertSql(
-                $@"SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
+"""
+SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
-WHERE (`c`.`ContactName` LIKE '') OR (LOCATE(`c`.`ContactName`, `c`.`ContactName`) > 0)");
+WHERE `c`.`ContactName` IS NOT NULL AND ((LOCATE(`c`.`ContactName`, `c`.`ContactName`) > 0) OR (`c`.`ContactName` LIKE ''))
+""");
         }
 
         [ConditionalTheory]
@@ -155,9 +157,11 @@ WHERE (`c`.`ContactName` LIKE '') OR (LOCATE(`c`.`ContactName`, `c`.`ContactName
             await base.String_Contains_Column(async);
 
             AssertSql(
-                $@"SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
+"""
+SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
-WHERE (`c`.`ContactName` LIKE '') OR (LOCATE(`c`.`ContactName`, `c`.`ContactName`) > 0)");
+WHERE `c`.`ContactName` IS NOT NULL AND ((LOCATE(`c`.`ContactName`, `c`.`ContactName`) > 0) OR (`c`.`ContactName` LIKE ''))
+""");
         }
 
         [ConditionalTheory]
@@ -344,7 +348,7 @@ WHERE (`o`.`UnitPrice` < 7.0) AND (ABS(`o`.`Quantity`) > 10)");
         public override async Task Where_math_abs_uncorrelated(bool async)
         {
             await base.Where_math_abs_uncorrelated(async);
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -524,7 +528,7 @@ WHERE `c`.`ContactName` LIKE '%     %'");
         {
             await base.String_Contains_parameter_with_whitespace(async);
 
-        AssertSql(
+            AssertSql(
 """
 @__pattern_0_rewritten='%     %' (Size = 30)
 
@@ -1718,7 +1722,7 @@ WHERE (`o`.`CustomerID` = 'ALFKI') AND ((CAST(`o`.`OrderDate` AS char) LIKE '%19
         {
             await base.String_StartsWith_Parameter(async);
 
-        AssertSql(
+            AssertSql(
 """
 @__pattern_0_rewritten='M%' (Size = 30)
 
@@ -1732,7 +1736,7 @@ WHERE `c`.`ContactName` LIKE @__pattern_0_rewritten
         {
             await base.String_EndsWith_Parameter(async);
 
-        AssertSql(
+            AssertSql(
 """
 @__pattern_0_rewritten='%b' (Size = 30)
 
@@ -1746,7 +1750,7 @@ WHERE `c`.`ContactName` LIKE @__pattern_0_rewritten
         {
             await base.String_Join_over_non_nullable_column(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `t`.`City`, `c0`.`CustomerID`
 FROM (
@@ -1763,7 +1767,7 @@ ORDER BY `t`.`City`
         {
             await base.String_Join_with_predicate(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `t`.`City`, `t0`.`CustomerID`
 FROM (
@@ -1784,7 +1788,7 @@ ORDER BY `t`.`City`
         {
             await base.String_Join_with_ordering(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `t`.`City`, `c0`.`CustomerID`
 FROM (
@@ -1801,7 +1805,7 @@ ORDER BY `t`.`City`, `c0`.`CustomerID` DESC
         {
             await base.String_Join_over_nullable_column(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `t`.`City`, `c0`.`Region`, `c0`.`CustomerID`
 FROM (
@@ -1818,7 +1822,7 @@ ORDER BY `t`.`City`
         {
             await base.String_Concat(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `t`.`City`, `c0`.`CustomerID`
 FROM (
@@ -1835,7 +1839,7 @@ ORDER BY `t`.`City`
         {
             await base.Where_math_square(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -1847,7 +1851,7 @@ WHERE POWER(CAST(`o`.`Discount` AS double), 2.0) > 0.05000000074505806
         {
             await base.Sum_over_round_works_correctly_in_projection(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, (
     SELECT COALESCE(SUM(ROUND(`o0`.`UnitPrice`, 2)), 0.0)
@@ -1862,7 +1866,7 @@ WHERE `o`.`OrderID` < 10300
         {
             await base.Sum_over_round_works_correctly_in_projection_2(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, (
     SELECT COALESCE(SUM(ROUND(`o0`.`UnitPrice` * `o0`.`UnitPrice`, 2)), 0.0)
@@ -1877,7 +1881,7 @@ WHERE `o`.`OrderID` < 10300
         {
             await base.Sum_over_truncate_works_correctly_in_projection(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, (
     SELECT COALESCE(SUM(TRUNCATE(`o0`.`UnitPrice`, 0)), 0.0)
@@ -1892,7 +1896,7 @@ WHERE `o`.`OrderID` < 10300
         {
             await base.Sum_over_truncate_works_correctly_in_projection_2(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, (
     SELECT COALESCE(SUM(TRUNCATE(`o0`.`UnitPrice` * `o0`.`UnitPrice`, 0)), 0.0)
@@ -1907,7 +1911,7 @@ WHERE `o`.`OrderID` < 10300
         {
             await base.Where_math_degrees(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -1919,7 +1923,7 @@ WHERE (`o`.`OrderID` = 11077) AND (DEGREES(CAST(`o`.`Discount` AS double)) > 0.0
         {
             await base.Where_math_radians(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -1931,7 +1935,7 @@ WHERE (`o`.`OrderID` = 11077) AND (RADIANS(CAST(`o`.`Discount` AS double)) > 0.0
         {
             await base.Where_mathf_abs1(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `p`.`ProductID`, `p`.`Discontinued`, `p`.`ProductName`, `p`.`SupplierID`, `p`.`UnitPrice`, `p`.`UnitsInStock`
 FROM `Products` AS `p`
@@ -1943,7 +1947,7 @@ WHERE ABS(CAST(`p`.`ProductID` AS double)) > 10
         {
             await base.Where_mathf_ceiling1(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -1955,7 +1959,7 @@ WHERE (`o`.`UnitPrice` < 7.0) AND (CEILING(`o`.`Discount`) > 0)
         {
             await base.Where_mathf_floor(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -1967,7 +1971,7 @@ WHERE (`o`.`Quantity` < 5) AND (FLOOR(CAST(`o`.`UnitPrice` AS double)) > 10)
         {
             await base.Where_mathf_power(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -1979,7 +1983,7 @@ WHERE POWER(`o`.`Discount`, 3) > 0.005
         {
             await base.Where_mathf_square(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -1991,7 +1995,7 @@ WHERE POWER(`o`.`Discount`, 2) > 0.05
         {
             await base.Where_mathf_round2(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2003,7 +2007,7 @@ WHERE ROUND(CAST(`o`.`UnitPrice` AS double), 2) > 100
         {
             await base.Select_mathf_round(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT ROUND(CAST(`o`.`OrderID` AS double))
 FROM `Orders` AS `o`
@@ -2015,7 +2019,7 @@ WHERE `o`.`OrderID` < 10250
         {
             await base.Select_mathf_round2(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT ROUND(CAST(`o`.`UnitPrice` AS double), 2)
 FROM `Order Details` AS `o`
@@ -2027,7 +2031,7 @@ WHERE `o`.`Quantity` < 5
         {
             await base.Where_mathf_truncate(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2039,7 +2043,7 @@ WHERE (`o`.`Quantity` < 5) AND (TRUNCATE(CAST(`o`.`UnitPrice` AS double), 0) > 1
         {
             await base.Select_mathf_truncate(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT TRUNCATE(CAST(`o`.`UnitPrice` AS double), 0)
 FROM `Order Details` AS `o`
@@ -2051,7 +2055,7 @@ WHERE `o`.`Quantity` < 5
         {
             await base.Where_mathf_exp(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2063,7 +2067,7 @@ WHERE (`o`.`OrderID` = 11077) AND (EXP(`o`.`Discount`) > 1)
         {
             await base.Where_mathf_log10(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2075,7 +2079,7 @@ WHERE ((`o`.`OrderID` = 11077) AND (`o`.`Discount` > 0)) AND (LOG10(`o`.`Discoun
         {
             await base.Where_mathf_log(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2087,7 +2091,7 @@ WHERE ((`o`.`OrderID` = 11077) AND (`o`.`Discount` > 0)) AND (LOG(`o`.`Discount`
         {
             await base.Where_mathf_log_new_base(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2099,7 +2103,7 @@ WHERE ((`o`.`OrderID` = 11077) AND (`o`.`Discount` > 0)) AND (LOG(`o`.`Discount`
         {
             await base.Where_mathf_sqrt(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2111,7 +2115,7 @@ WHERE (`o`.`OrderID` = 11077) AND (SQRT(`o`.`Discount`) > 0)
         {
             await base.Where_mathf_acos(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2123,7 +2127,7 @@ WHERE (`o`.`OrderID` = 11077) AND (ACOS(`o`.`Discount`) > 1)
         {
             await base.Where_mathf_asin(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2135,7 +2139,7 @@ WHERE (`o`.`OrderID` = 11077) AND (ASIN(`o`.`Discount`) > 0)
         {
             await base.Where_mathf_atan(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2147,7 +2151,7 @@ WHERE (`o`.`OrderID` = 11077) AND (ATAN(`o`.`Discount`) > 0)
         {
             await base.Where_mathf_atan2(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2159,7 +2163,7 @@ WHERE (`o`.`OrderID` = 11077) AND (ATAN2(`o`.`Discount`, 1) > 0)
         {
             await base.Where_mathf_cos(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2171,7 +2175,7 @@ WHERE (`o`.`OrderID` = 11077) AND (COS(`o`.`Discount`) > 0)
         {
             await base.Where_mathf_sin(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2183,7 +2187,7 @@ WHERE (`o`.`OrderID` = 11077) AND (SIN(`o`.`Discount`) > 0)
         {
             await base.Where_mathf_tan(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2195,7 +2199,7 @@ WHERE (`o`.`OrderID` = 11077) AND (TAN(`o`.`Discount`) > 0)
         {
             await base.Where_mathf_sign(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2207,7 +2211,7 @@ WHERE (`o`.`OrderID` = 11077) AND (SIGN(`o`.`Discount`) > 0)
         {
             await base.Where_mathf_degrees(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2219,7 +2223,7 @@ WHERE (`o`.`OrderID` = 11077) AND (DEGREES(`o`.`Discount`) > 0)
         {
             await base.Where_mathf_radians(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`ProductID`, `o`.`Discount`, `o`.`Quantity`, `o`.`UnitPrice`
 FROM `Order Details` AS `o`
@@ -2231,7 +2235,7 @@ WHERE (`o`.`OrderID` = 11077) AND (RADIANS(`o`.`Discount`) > 0)
         {
             await base.Indexof_with_one_constant_arg(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
@@ -2243,7 +2247,7 @@ WHERE (LOCATE('a', `c`.`ContactName`) - 1) = 1
         {
             await base.Indexof_with_one_parameter_arg(async);
 
-        AssertSql(
+            AssertSql(
 """
 @__pattern_0='a' (Size = 4000)
 
@@ -2257,7 +2261,7 @@ WHERE (LOCATE(@__pattern_0, `c`.`ContactName`) - 1) = 1
         {
             await base.Indexof_with_constant_starting_position(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
@@ -2269,7 +2273,7 @@ WHERE (LOCATE('a', `c`.`ContactName`, 3) - 1) = 4
         {
             await base.Indexof_with_parameter_starting_position(async);
 
-        AssertSql(
+            AssertSql(
 """
 @__start_0='2'
 
@@ -2283,7 +2287,7 @@ WHERE (LOCATE('a', `c`.`ContactName`, @__start_0 + 1) - 1) = 4
         {
             await base.Replace_using_property_arguments(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
@@ -2295,7 +2299,7 @@ WHERE REPLACE(`c`.`ContactName`, `c`.`ContactName`, `c`.`CustomerID`) = `c`.`Cus
         {
             await base.IsNullOrEmpty_negated_in_predicate(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
 FROM `Customers` AS `c`
@@ -2307,7 +2311,7 @@ WHERE `c`.`Region` IS NOT NULL AND (`c`.`Region` <> '')
         {
             await base.Where_DateOnly_FromDateTime(async);
 
-        AssertSql(
+            AssertSql(
 """
 SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`
 FROM `Orders` AS `o`

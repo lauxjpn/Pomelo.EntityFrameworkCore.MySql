@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using Xunit;
@@ -57,6 +58,10 @@ LEFT JOIN (
 WHERE `c`.`CustomerID` LIKE 'A%'
 ORDER BY `c`.`CustomerID`, `t0`.`OrderID0`, `t0`.`OrderID`");
         }
+
+        // https://github.com/npgsql/efcore.pg/issues/2759
+        public override Task Join_local_collection_int_closure_is_cached_correctly(bool async)
+            => Assert.ThrowsAsync<InvalidOperationException>(() => base.Join_local_collection_int_closure_is_cached_correctly(async));
 
         private void AssertSql(params string[] expected)
             => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
