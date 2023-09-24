@@ -12,21 +12,9 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionTranslators.Internal;
 
 /// <summary>
-///     An expression that represents a SQL Server OPENJSON function call in a SQL tree.
+///     An expression that represents a MySQL JSON_TABLE() function call in a SQL tree.
 /// </summary>
-/// <remarks>
-///     <para>
-///         See <see href="https://learn.microsoft.com/sql/t-sql/functions/openjson-transact-sql">OPENJSON (Transact-SQL)</see> for more
-///         information and examples.
-///     </para>
-///     <para>
-///         This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-///         the same compatibility standards as public APIs. It may be changed or removed without notice in
-///         any release. You should only use it directly in your code with extreme caution and knowing that
-///         doing so can result in application failures when updating to a new Entity Framework Core release.
-///     </para>
-/// </remarks>
-public class SqlServerOpenJsonExpression : TableValuedFunctionExpression, IClonableTableExpressionBase
+public class MySqlJsonTableExpression : TableValuedFunctionExpression, IClonableTableExpressionBase
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -60,7 +48,7 @@ public class SqlServerOpenJsonExpression : TableValuedFunctionExpression, IClona
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
 
-    public SqlServerOpenJsonExpression(
+    public MySqlJsonTableExpression(
         string alias,
         SqlExpression jsonExpression,
         IReadOnlyList<PathSegment> path = null,
@@ -133,15 +121,15 @@ public class SqlServerOpenJsonExpression : TableValuedFunctionExpression, IClona
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual SqlServerOpenJsonExpression Update(
+    public virtual MySqlJsonTableExpression Update(
         SqlExpression jsonExpression,
         IReadOnlyList<PathSegment> path,
         IReadOnlyList<ColumnInfo> columnInfos = null)
-        => jsonExpression == JsonExpression
+        => Equals(jsonExpression, JsonExpression)
         && (ReferenceEquals(path, Path) || path is not null && Path is not null && path.SequenceEqual(Path))
         && (ReferenceEquals(columnInfos, ColumnInfos) || columnInfos is not null && ColumnInfos is not null && columnInfos.SequenceEqual(ColumnInfos))
             ? this
-            : new SqlServerOpenJsonExpression(Alias, jsonExpression, path, columnInfos);
+            : new MySqlJsonTableExpression(Alias, jsonExpression, path, columnInfos);
 
 
     /// <summary>
@@ -153,7 +141,7 @@ public class SqlServerOpenJsonExpression : TableValuedFunctionExpression, IClona
     // TODO: Deep clone, see #30982
     public virtual TableExpressionBase Clone()
     {
-        var clone = new SqlServerOpenJsonExpression(Alias, JsonExpression, Path, ColumnInfos);
+        var clone = new MySqlJsonTableExpression(Alias, JsonExpression, Path, ColumnInfos);
 
         foreach (var annotation in GetAnnotations())
         {
@@ -227,9 +215,9 @@ public class SqlServerOpenJsonExpression : TableValuedFunctionExpression, IClona
 
     /// <inheritdoc />
     public override bool Equals(object obj)
-        => ReferenceEquals(this, obj) || (obj is SqlServerOpenJsonExpression openJsonExpression && Equals(openJsonExpression));
+        => ReferenceEquals(this, obj) || (obj is MySqlJsonTableExpression jsonTableExpression && Equals(jsonTableExpression));
 
-    private bool Equals(SqlServerOpenJsonExpression other)
+    private bool Equals(MySqlJsonTableExpression other)
     {
         if (!base.Equals(other) || ColumnInfos?.Count != other.ColumnInfos?.Count)
         {

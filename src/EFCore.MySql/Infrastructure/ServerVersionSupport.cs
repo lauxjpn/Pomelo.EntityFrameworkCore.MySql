@@ -90,5 +90,10 @@ namespace Pomelo.EntityFrameworkCore.MySql.Infrastructure
         public virtual bool LimitWithinInAllAnySomeSubquery => false;
         public virtual bool LimitWithNonConstantValue => false;
         public virtual bool JsonTable => false;
+        public virtual bool Values => false;
+        public virtual bool ValuesWithRows => false;
+        public virtual bool OffsetReferencesOuterQuery => false;
+
+        public virtual bool JsonTableImplementationWithoutBugs => JsonTable;
     }
 }

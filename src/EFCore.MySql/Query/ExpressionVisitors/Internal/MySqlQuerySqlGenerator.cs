@@ -84,7 +84,7 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
             {
                 MySqlJsonTraversalExpression jsonTraversalExpression => VisitJsonPathTraversal(jsonTraversalExpression),
                 MySqlColumnAliasReferenceExpression columnAliasReferenceExpression => VisitColumnAliasReference(columnAliasReferenceExpression),
-                SqlServerOpenJsonExpression openJsonExpression => VisitOpenJsonExpression(openJsonExpression),
+                MySqlJsonTableExpression jsonTableExpression => VisitJsonTableExpression(jsonTableExpression),
                 _ => base.VisitExtension(extensionExpression)
             };
 
@@ -461,6 +461,142 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
                 RelationalStrings.ExecuteOperationWithUnsupportedOperatorInSqlGeneration(nameof(RelationalQueryableExtensions.ExecuteUpdate)));
         }
 
+        protected override Expression VisitJsonScalar(JsonScalarExpression jsonScalarExpression)
+        {
+            // TODO: Stop producing empty JsonScalarExpressions, #30768
+            var path = jsonScalarExpression.Path;
+            if (path.Count == 0)
+            {
+                Visit(jsonScalarExpression.Json);
+                return jsonScalarExpression;
+            }
+
+            string jsonFunctionName;
+            string castStoreType = null;
+
+            if (/*jsonScalarExpression.TypeMapping is SqlServerJsonTypeMapping
+                ||*/ jsonScalarExpression.TypeMapping?.ElementTypeMapping is not null)
+            {
+                jsonFunctionName = "JSON_EXTRACT";
+            }
+            else
+            {
+                // JSON_VALUE returns varchar(512) by default (https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-value),
+                // so we let it cast the result to the expected type using the RETURNING clause.
+                // CHECK: - except if it's a string (since the cast interferes with indexes over the JSON property).
+                // if (jsonScalarExpression.TypeMapping is not StringTypeMapping)
+                // {
+                    castStoreType = GetCastStoreType(jsonScalarExpression.TypeMapping);
+                // }
+
+                jsonFunctionName = "JSON_VALUE";
+            }
+
+            if (castStoreType is not null)
+            {
+                Sql.Append("CAST(");
+            }
+
+            Sql.Append(jsonFunctionName);
+            Sql.Append("(");
+
+            Visit(jsonScalarExpression.Json);
+
+            Sql.Append(", ");
+            GenerateJsonPath(jsonScalarExpression.Path);
+            Sql.Append(")");
+
+            if (castStoreType is not null)
+            {
+                Sql.Append(" AS ");
+                Sql.Append(castStoreType);
+                Sql.Append(")");
+            }
+
+            return jsonScalarExpression;
+        }
+
+        protected override void GenerateValues(ValuesExpression valuesExpression)
+        {
+            if (_options.ServerVersion.Supports.Values ||
+                _options.ServerVersion.Supports.ValuesWithRows)
+            {
+                base.GenerateValues(valuesExpression);
+                return;
+            }
+
+            var rowValues = valuesExpression.RowValues;
+
+            //
+            // Use backwards compatible SELECT statements:
+            //
+
+            Sql.Append("SELECT ");
+
+            Check.DebugAssert(rowValues.Count > 0, "rowValues.Count > 0");
+            var firstRowValues = rowValues[0].Values;
+            for (var i = 0; i < firstRowValues.Count; i++)
+            {
+                if (i > 0)
+                {
+                    Sql.Append(", ");
+                }
+
+                Visit(firstRowValues[i]);
+
+                Sql
+                    .Append(AliasSeparator)
+                    .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(valuesExpression.ColumnNames[i]));
+            }
+
+            if (rowValues.Count > 1)
+            {
+                Sql.Append(" UNION ALL SELECT ");
+
+                for (var i = 1; i < rowValues.Count; i++)
+                {
+                    if (i > 1)
+                    {
+                        Sql.Append(", ");
+                    }
+
+                    Visit(valuesExpression.RowValues[i]);
+                }
+            }
+        }
+
+        protected override Expression VisitRowValue(RowValueExpression rowValueExpression)
+        {
+            if (_options.ServerVersion.Supports.Values)
+            {
+                return base.VisitRowValue(rowValueExpression);
+            }
+
+            if (_options.ServerVersion.Supports.ValuesWithRows)
+            {
+                Sql.Append("ROW");
+                return base.VisitRowValue(rowValueExpression);
+            }
+
+            //
+            // Columns for backwards compatible SELECT statement:
+            //
+
+            var values = rowValueExpression.Values;
+            var count = values.Count;
+            for (var i = 0; i < count; i++)
+            {
+                if (i > 0)
+                {
+                    Sql.Append(", ");
+                }
+
+                Visit(values[i]);
+            }
+
+            return rowValueExpression;
+        }
+
         protected virtual void GenerateList<T>(
             IReadOnlyList<T> items,
             Action<T> generationAction,
@@ -718,74 +854,90 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
             return mySqlBinaryExpression;
         }
 
-        protected virtual Expression VisitOpenJsonExpression(SqlServerOpenJsonExpression openJsonExpression)
+        protected virtual Expression VisitJsonTableExpression(MySqlJsonTableExpression jsonTableExpression)
         {
-            // OPENJSON docs: https://learn.microsoft.com/sql/t-sql/functions/openjson-transact-sql
+            // if (jsonTableExpression.ColumnInfos is not { Count: > 0 })
+            // {
+            //     var hasStringElement = jsonTableExpression.JsonExpression.TypeMapping?.ElementTypeMapping?.ClrType == typeof(string);
+            //
+            //     if (hasStringElement)
+            //     {
+            //         Sql.Append("JSON_UNQUOTE(");
+            //     }
+            //
+            //     Sql.Append("JSON_EXTRACT(");
+            //     Visit(jsonTableExpression.JsonExpression);
+            //     Sql.Append(", ");
+            //     GenerateJsonPath(jsonTableExpression.Path);
+            //     Sql.Append(")");
+            //
+            //     if (hasStringElement)
+            //     {
+            //         Sql.Append(")");
+            //     }
+            //
+            //     return jsonTableExpression;
+            // }
 
-            // The second argument is the JSON path, which is represented as a list of PathSegments, from which we generate a SQL jsonpath
-            // expression.
             Sql.Append("JSON_TABLE(");
 
-            Visit(openJsonExpression.JsonExpression);
+            Visit(jsonTableExpression.JsonExpression);
 
             Sql.Append(", ");
-            GenerateJsonPath(openJsonExpression.Path);
+            GenerateJsonPath(jsonTableExpression.Path);
 
-            if (openJsonExpression.ColumnInfos is not null)
+            if (jsonTableExpression.ColumnInfos is not { Count: > 0 })
             {
-                Sql.Append(" COLUMNS (");
+                throw new InvalidOperationException("JSON_TABLE expression does not contain any columns.");
+            }
 
-                if (openJsonExpression.ColumnInfos is [var singleColumnInfo])
-                {
-                    GenerateColumnInfo(singleColumnInfo);
-                }
-                else
-                {
-                    Sql.AppendLine();
-                    using var _ = Sql.Indent();
+            Sql.AppendLine(" COLUMNS (");
 
-                    for (var i = 0; i < openJsonExpression.ColumnInfos.Count; i++)
+            using (var _ = Sql.Indent())
+            {
+                Sql.Append(Dependencies.SqlGenerationHelper.DelimitIdentifier("key"));
+                Sql.AppendLine(" FOR ORDINALITY,");
+
+                for (var i = 0; i < jsonTableExpression.ColumnInfos.Count; i++)
+                {
+                    var columnInfo = jsonTableExpression.ColumnInfos[i];
+
+                    if (i > 0)
                     {
-                        var columnInfo = openJsonExpression.ColumnInfos[i];
-
-                        if (i > 0)
-                        {
-                            Sql.AppendLine(",");
-                        }
-
-                        GenerateColumnInfo(columnInfo);
+                        Sql.AppendLine(",");
                     }
 
-                    Sql.AppendLine();
+                    GenerateColumnInfo(columnInfo);
                 }
 
-                void GenerateColumnInfo(SqlServerOpenJsonExpression.ColumnInfo columnInfo)
-                {
-                    Sql
-                        .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(columnInfo.Name))
-                        .Append(" ")
-                        .Append(columnInfo.TypeMapping.StoreType);
-
-                    if (columnInfo.Path is not null)
-                    {
-                        Sql.Append(" PATH ");
-                        GenerateJsonPath(columnInfo.Path);
-                    }
-
-                    if (columnInfo.AsJson)
-                    {
-                        Sql.Append(" AS JSON");
-                    }
-                }
-
-                Sql.Append(")");
+                Sql.AppendLine();
             }
 
             Sql.Append(")");
 
-            Sql.Append(AliasSeparator).Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(openJsonExpression.Alias));
+            void GenerateColumnInfo(MySqlJsonTableExpression.ColumnInfo columnInfo)
+            {
+                Sql
+                    .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(columnInfo.Name))
+                    .Append(" ")
+                    .Append(columnInfo.TypeMapping.StoreType);
 
-            return openJsonExpression;
+                if (columnInfo.Path is not null)
+                {
+                    Sql.Append(" PATH ");
+                    GenerateJsonPath(columnInfo.Path);
+                }
+
+                // if (columnInfo.AsJson)
+                // {
+                //     Sql.Append(" AS ").Append("JSON");
+                // }
+            }
+
+            Sql.Append(")");
+            Sql.Append(AliasSeparator).Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(jsonTableExpression.Alias));
+
+            return jsonTableExpression;
         }
 
         protected virtual void GenerateJsonPath(IReadOnlyList<PathSegment> path)
@@ -805,25 +957,19 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
                     case { ArrayIndex: SqlExpression arrayIndex }:
                         Sql.Append("[");
 
-                        // JSON functions such as JSON_VALUE only support arbitrary expressions for the path parameter in SQL Server 2017 and
-                        // above; before that, arguments must be constant strings.
                         if (arrayIndex is SqlConstantExpression)
                         {
                             Visit(arrayIndex);
                         }
-                        else // if (_sqlServerCompatibilityLevel >= 140)
+                        else
                         {
-                            Sql.Append("' + CAST(");
-                            Visit(arrayIndex);
-                            Sql.Append(" AS ");
-                            Sql.Append(_typeMappingSource.GetMapping(typeof(string)).StoreType);
-                            Sql.Append(") + '");
+                            Visit(
+                                new SqlUnaryExpression(
+                                    ExpressionType.Convert,
+                                    arrayIndex,
+                                    typeof(string),
+                                    _typeMappingSource.GetMapping(typeof(string))));
                         }
-                        // else
-                        // {
-                        //     throw new InvalidOperationException(
-                        //         SqlServerStrings.JsonValuePathExpressionsNotSupported(_sqlServerCompatibilityLevel));
-                        // }
 
                         Sql.Append("]");
                         break;
