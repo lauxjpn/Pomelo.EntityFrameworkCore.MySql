@@ -95,6 +95,7 @@ namespace Microsoft.EntityFrameworkCore
             public override bool OffsetReferencesOuterQuery => false;
 
             public override bool JsonTableImplementationWithoutBugs => false;
+            public override bool JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash => false;
         }
     }
 }

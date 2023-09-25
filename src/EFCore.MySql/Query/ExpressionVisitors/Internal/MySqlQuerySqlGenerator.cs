@@ -272,7 +272,8 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
         {
             Sql.Append("LEFT JOIN ");
 
-            if (outerApplyExpression.Table is not TableExpression)
+            if (outerApplyExpression.Table is not TableExpression &&
+                outerApplyExpression.Table is not MySqlJsonTableExpression)
             {
                 Sql.Append("LATERAL ");
             }
@@ -467,30 +468,38 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
             var path = jsonScalarExpression.Path;
             if (path.Count == 0)
             {
-                Visit(jsonScalarExpression.Json);
                 return jsonScalarExpression;
             }
 
-            string jsonFunctionName;
+            var jsonPathNeedsConcat = JsonPathNeedsConcat(jsonScalarExpression.Path);
+
+            var jsonFunctionName = jsonPathNeedsConcat ? "JSON_UNQUOTE(JSON_EXTRACT" : "JSON_VALUE";
             string castStoreType = null;
 
-            if (/*jsonScalarExpression.TypeMapping is SqlServerJsonTypeMapping
-                ||*/ jsonScalarExpression.TypeMapping?.ElementTypeMapping is not null)
-            {
-                jsonFunctionName = "JSON_EXTRACT";
-            }
-            else
-            {
-                // JSON_VALUE returns varchar(512) by default (https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-value),
-                // so we let it cast the result to the expected type using the RETURNING clause.
-                // CHECK: - except if it's a string (since the cast interferes with indexes over the JSON property).
-                // if (jsonScalarExpression.TypeMapping is not StringTypeMapping)
-                // {
-                    castStoreType = GetCastStoreType(jsonScalarExpression.TypeMapping);
-                // }
+            // if (/*jsonScalarExpression.TypeMapping is SqlServerJsonTypeMapping
+            //     ||*/ jsonScalarExpression.TypeMapping?.ElementTypeMapping is not null)
+            // {
+            //     jsonFunctionName = "JSON_UNQUOTE(JSON_EXTRACT";
+            // }
+            // else
+            // {
+            //     // JSON_VALUE returns varchar(512) by default (https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html#function_json-value),
+            //     // so we let it cast the result to the expected type using the RETURNING clause.
+            //     // CHECK: - except if it's a string (since the cast interferes with indexes over the JSON property).
+            //     // if (jsonScalarExpression.TypeMapping is not StringTypeMapping)
+            //     // {
+            //         castStoreType = GetCastStoreType(jsonScalarExpression.TypeMapping);
+            //     // }
+            //
+            //     jsonFunctionName = "JSON_VALUE";
+            // }
 
-                jsonFunctionName = "JSON_VALUE";
-            }
+            // if (jsonScalarExpression.TypeMapping?.ElementTypeMapping is null &&
+            //     jsonScalarExpression.TypeMapping is not StringTypeMapping &&
+            //     jsonPathNeedsConcat)
+            // {
+                castStoreType = GetCastStoreType(jsonScalarExpression.TypeMapping);
+            // }
 
             if (castStoreType is not null)
             {
@@ -504,7 +513,7 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
 
             Sql.Append(", ");
             GenerateJsonPath(jsonScalarExpression.Path);
-            Sql.Append(")");
+            Sql.Append(jsonPathNeedsConcat ? "))" : ")");
 
             if (castStoreType is not null)
             {
@@ -940,11 +949,20 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
             return jsonTableExpression;
         }
 
-        protected virtual void GenerateJsonPath(IReadOnlyList<PathSegment> path)
-        {
-            Sql.Append("'$");
+        protected virtual bool JsonPathNeedsConcat(IReadOnlyList<PathSegment> path)
+            => path.Any(s => s.ArrayIndex is not null && s.ArrayIndex is not SqlConstantExpression);
 
+        protected virtual void GenerateJsonPath(IReadOnlyList<PathSegment> path, bool? needsConcat = null)
+        {
             path ??= Array.Empty<PathSegment>();
+            needsConcat ??= JsonPathNeedsConcat(path);
+
+            if (needsConcat.Value)
+            {
+                Sql.Append("CONCAT(");
+            }
+
+            Sql.Append("'$");
 
             foreach (var pathSegment in path)
             {
@@ -963,12 +981,16 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
                         }
                         else
                         {
+                            Sql.Append("', ");
+
                             Visit(
                                 new SqlUnaryExpression(
                                     ExpressionType.Convert,
                                     arrayIndex,
                                     typeof(string),
                                     _typeMappingSource.GetMapping(typeof(string))));
+
+                            Sql.Append(", '");
                         }
 
                         Sql.Append("]");
@@ -980,6 +1002,11 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.ExpressionVisitors.Internal
             }
 
             Sql.Append("'");
+
+            if (needsConcat.Value)
+            {
+                Sql.Append(")");
+            }
         }
 
         /// <inheritdoc />

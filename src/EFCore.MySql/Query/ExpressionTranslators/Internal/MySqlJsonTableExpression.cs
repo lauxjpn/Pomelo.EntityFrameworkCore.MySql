@@ -115,6 +115,9 @@ public class MySqlJsonTableExpression : TableValuedFunctionExpression, IClonable
         return Update(visitedJsonExpression, visitedPath ?? Path, ColumnInfos);
     }
 
+    public override TableValuedFunctionExpression Update(IReadOnlyList<SqlExpression> arguments)
+        => Update(arguments[0], Path, ColumnInfos);
+
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
     ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
