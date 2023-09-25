@@ -21,6 +21,9 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.Internal;
 
 public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQueryableMethodTranslatingExpressionVisitor
 {
+    private static readonly bool WorkaroundMySql8EngineCrashWhenUsingJsonTableWithPrimitiveCollectionInParameters
+        = AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue1790", out var enabled1790) && enabled1790; // TODO
+
     private readonly IMySqlOptions _options;
     private readonly MySqlSqlExpressionFactory _sqlExpressionFactory;
     private readonly IRelationalTypeMappingSource _typeMappingSource;
@@ -48,6 +51,29 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
 
     protected override QueryableMethodTranslatingExpressionVisitor CreateSubqueryVisitor()
         => new MySqlQueryableMethodTranslatingExpressionVisitor(this);
+
+    protected override bool IsNaturallyOrdered(SelectExpression selectExpression)
+    {
+        return selectExpression is
+               {
+                   Tables: [var mainTable, ..],
+                   Orderings:
+                   [
+                       {
+                           Expression: ColumnExpression { Name: "key", Table: var orderingTable } orderingColumn,
+                           IsAscending: true
+                       }
+                   ]
+               }
+               && orderingTable == mainTable
+               && IsJsonEachKeyColumn(orderingColumn);
+
+        bool IsJsonEachKeyColumn(ColumnExpression orderingColumn)
+            => orderingColumn.Table is MySqlJsonTableExpression
+               || (orderingColumn.Table is SelectExpression subquery
+                   && subquery.Projection.FirstOrDefault(p => p.Alias == "key")?.Expression is ColumnExpression projectedColumn
+                   && IsJsonEachKeyColumn(projectedColumn));
+    }
 
     protected override bool IsValidSelectExpressionForExecuteDelete(
         SelectExpression selectExpression,
@@ -161,32 +187,25 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
         Expression index,
         bool returnDefault)
     {
-        // TODO: Make sure we want to actually transform to JSON_VALUE, #30981
         if (!returnDefault
             && source.QueryExpression is SelectExpression
             {
-                Tables: [MySqlJsonTableExpression { Arguments: [var jsonArrayColumn] } openJsonExpression],
+                Tables:
+                [
+                    MySqlJsonTableExpression
+                    {
+                        Name: "JSON_TABLE", Schema: null, IsBuiltIn: true, JsonExpression: var jsonArrayColumn
+                    } jsonEachExpression
+                ],
                 GroupBy: [],
                 Having: null,
                 IsDistinct: false,
+                Orderings: [{ Expression: ColumnExpression { Name: "key" } orderingColumn, IsAscending: true }],
                 Limit: null,
-                Offset: null,
-                // We can only apply the indexing if the JSON array is ordered by its natural ordered, i.e. by the "key" column that
-                // we created in TranslateCollection. For example, if another ordering has been applied (e.g. by the JSON elements
-                // themselves), we can no longer simply index into the original array.
-                Orderings:
-                [
-                    {
-                        Expression: SqlUnaryExpression
-                        {
-                            OperatorType: ExpressionType.Convert,
-                            Operand: ColumnExpression { Name: "key", Table: var orderingTable }
-                        }
-                    }
-                ]
+                Offset: null
             } selectExpression
-            && TranslateExpression(index) is { } translatedIndex
-            && orderingTable == openJsonExpression)
+            && orderingColumn.Table == jsonEachExpression
+            && TranslateExpression(index) is { } translatedIndex)
         {
             // Index on JSON array
 
@@ -200,35 +219,24 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
             }
 
             if (shaperExpression is ProjectionBindingExpression projectionBindingExpression
-                && selectExpression.GetProjection(projectionBindingExpression) is SqlExpression projection)
+                && selectExpression.GetProjection(projectionBindingExpression) is ColumnExpression projectionColumn)
             {
-                // OPENJSON's value column is an nvarchar(max); if this is a collection column whose type mapping is know, the projection
-                // contains a CAST node which we unwrap
-                var projectionColumn = projection switch
+                SqlExpression translation = new JsonScalarExpression(
+                    jsonArrayColumn,
+                    new[] { new PathSegment(translatedIndex) },
+                    projectionColumn.Type,
+                    projectionColumn.TypeMapping,
+                    projectionColumn.IsNullable);
+
+                // If we have a type mapping (i.e. translating over a column rather than a parameter), apply any necessary server-side
+                // conversions.
+                if (projectionColumn.TypeMapping is not null)
                 {
-                    ColumnExpression c => c,
-                    SqlUnaryExpression { OperatorType: ExpressionType.Convert, Operand: ColumnExpression c } => c,
-                    _ => null
-                };
-
-                if (projectionColumn is not null)
-                {
-                    // If the inner expression happens to itself be a JsonScalarExpression, simply append the two paths to avoid creating
-                    // JSON_VALUE within JSON_VALUE.
-                    var (json, path) = jsonArrayColumn is JsonScalarExpression innerJsonScalarExpression
-                        ? (innerJsonScalarExpression.Json,
-                            innerJsonScalarExpression.Path.Append(new PathSegment(translatedIndex)).ToArray())
-                        : (jsonArrayColumn, new PathSegment[] { new(translatedIndex) });
-
-                    var translation = new JsonScalarExpression(
-                        json,
-                        path,
-                        projection.Type,
-                        projection.TypeMapping,
-                        projectionColumn.IsNullable);
-
-                    return source.UpdateQueryExpression(_sqlExpressionFactory.Select(translation));
+                    translation = ApplyJsonSqlConversion(
+                        translation, _sqlExpressionFactory, projectionColumn.TypeMapping, projectionColumn.IsNullable);
                 }
+
+                return source.UpdateQueryExpression(_sqlExpressionFactory.Select(translation));
             }
         }
 
@@ -237,150 +245,152 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
 
     protected override ShapedQueryExpression TransformJsonQueryToTable(JsonQueryExpression jsonQueryExpression)
     {
-        var entityType = jsonQueryExpression.EntityType;
-        var textTypeMapping = _typeMappingSource.FindMapping(typeof(string));
+        return base.TransformJsonQueryToTable(jsonQueryExpression);
 
-        // TODO: Refactor this out
-        // Calculate the table alias for the json_each expression based on the last named path segment
-        // (or the JSON column name if there are none)
-        var lastNamedPathSegment = jsonQueryExpression.Path.LastOrDefault(ps => ps.PropertyName is not null);
-        var tableAlias = char.ToLowerInvariant((lastNamedPathSegment.PropertyName ?? jsonQueryExpression.JsonColumn.Name)[0]).ToString();
-
-        // Handling a non-primitive JSON array is complicated on SQLite; unlike SQL Server OPENJSON and PostgreSQL jsonb_to_recordset,
-        // SQLite's json_each can only project elements of the array, and not properties within those elements. For example:
-        // SELECT value FROM json_each('[{"a":1,"b":"foo"}, {"a":2,"b":"bar"}]')
-        // This will return two rows, each with a string column representing an array element (i.e. {"a":1,"b":"foo"}). To decompose that
-        // into a and b columns, a further extraction is needed:
-        // SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each('[{"a":1,"b":"foo"}, {"a":2,"b":"bar"}]')
-
-        // We therefore generate a minimal subquery projecting out all the properties and navigations, wrapped by a SelectExpression
-        // containing that:
-        // SELECT ...
-        // FROM (SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each(<JSON column>, <path>)) AS j
-        // WHERE j.a = 8;
-
-        // Unfortunately, while the subquery projects the entity, our EntityProjectionExpression currently supports only bare
-        // ColumnExpression (the above requires JsonScalarExpression). So we hack as if the subquery projects an anonymous type instead,
-        // with a member for each JSON property that needs to be projected. We then wrap it with a SelectExpression the projects a proper
-        // EntityProjectionExpression.
-
-        var jsonEachExpression = new MySqlJsonTableExpression(tableAlias, jsonQueryExpression.JsonColumn, jsonQueryExpression.Path);
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-        var selectExpression = new SelectExpression(
-            jsonQueryExpression,
-            jsonEachExpression,
-            "key",
-            typeof(int),
-            _typeMappingSource.FindMapping(typeof(int))!);
-#pragma warning restore EF1001 // Internal EF Core API usage.
-
-        selectExpression.AppendOrdering(
-            new OrderingExpression(
-                selectExpression.CreateColumnExpression(
-                    jsonEachExpression,
-                    "key",
-                    typeof(int),
-                    typeMapping: _typeMappingSource.FindMapping(typeof(int)),
-                    columnNullable: false),
-                ascending: true));
-
-        var propertyJsonScalarExpression = new Dictionary<ProjectionMember, Expression>();
-
-        var jsonColumn = selectExpression.CreateColumnExpression(
-            jsonEachExpression, "value", typeof(string), _typeMappingSource.FindMapping(typeof(string))); // TODO: nullable?
-
-        var containerColumnName = entityType.GetContainerColumnName();
-        Check.DebugAssert(containerColumnName is not null, "JsonQueryExpression to entity type without a container column name");
-
-        // First step: build a SelectExpression that will execute json_each and project all properties and navigations out, e.g.
-        // (SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each(c."JsonColumn", '$.Something.SomeCollection')
-
-        // We're only interested in properties which actually exist in the JSON, filter out uninteresting shadow keys
-        foreach (var property in GetAllPropertiesInHierarchy(entityType))
-        {
-            if (property.GetJsonPropertyName() is string jsonPropertyName)
-            {
-                // HACK: currently the only way to project multiple values from a SelectExpression is to simulate a Select out to an anonymous
-                // type; this requires the MethodInfos of the anonymous type properties, from which the projection alias gets taken.
-                // So we create fake members to hold the JSON property name for the alias.
-                var projectionMember = new ProjectionMember().Append(new FakeMemberInfo(jsonPropertyName));
-
-                propertyJsonScalarExpression[projectionMember] = new JsonScalarExpression(
-                    jsonColumn,
-                    new[] { new PathSegment(property.GetJsonPropertyName()!) },
-                    property.ClrType.UnwrapNullableType(),
-                    property.GetRelationalTypeMapping(),
-                    property.IsNullable);
-            }
-        }
-
-        foreach (var navigation in GetAllNavigationsInHierarchy(jsonQueryExpression.EntityType)
-                     .Where(
-                         n => n.ForeignKey.IsOwnership
-                             && n.TargetEntityType.IsMappedToJson()
-                             && n.ForeignKey.PrincipalToDependent == n))
-        {
-            var jsonNavigationName = navigation.TargetEntityType.GetJsonPropertyName();
-            Check.DebugAssert(jsonNavigationName is not null, "Invalid navigation found on JSON-mapped entity");
-
-            var projectionMember = new ProjectionMember().Append(new FakeMemberInfo(jsonNavigationName));
-
-            propertyJsonScalarExpression[projectionMember] = new JsonScalarExpression(
-                jsonColumn,
-                new[] { new PathSegment(jsonNavigationName) },
-                typeof(string),
-                textTypeMapping,
-                !navigation.ForeignKey.IsRequiredDependent);
-        }
-
-        selectExpression.ReplaceProjection(propertyJsonScalarExpression);
-
-        // Second step: push the above SelectExpression down to a subquery, and project an entity projection from the outer
-        // SelectExpression, i.e.
-        // SELECT "t"."a", "t"."b"
-        // FROM (SELECT value ->> 'a' ... FROM json_each(...))
-
-        selectExpression.PushdownIntoSubquery();
-        var subquery = selectExpression.Tables[0];
-
-#pragma warning disable EF1001 // Internal EF Core API usage.
-        var newOuterSelectExpression = new SelectExpression(
-            jsonQueryExpression,
-            subquery,
-            "key",
-            typeof(int),
-            _typeMappingSource.FindMapping(typeof(int))!);
-#pragma warning restore EF1001 // Internal EF Core API usage.
-
-        newOuterSelectExpression.AppendOrdering(
-            new OrderingExpression(
-                selectExpression.CreateColumnExpression(
-                    subquery,
-                    "key",
-                    typeof(int),
-                    typeMapping: _typeMappingSource.FindMapping(typeof(int)),
-                    columnNullable: false),
-                ascending: true));
-
-        return new ShapedQueryExpression(
-            newOuterSelectExpression,
-            new RelationalStructuralTypeShaperExpression(
-                jsonQueryExpression.EntityType,
-                new ProjectionBindingExpression(
-                    newOuterSelectExpression,
-                    new ProjectionMember(),
-                    typeof(ValueBuffer)),
-                false));
-
-        // TODO: Move these to IEntityType?
-        static IEnumerable<IProperty> GetAllPropertiesInHierarchy(IEntityType entityType)
-            => entityType.GetAllBaseTypes().Concat(entityType.GetDerivedTypesInclusive())
-                .SelectMany(t => t.GetDeclaredProperties());
-
-        static IEnumerable<INavigation> GetAllNavigationsInHierarchy(IEntityType entityType)
-            => entityType.GetAllBaseTypes().Concat(entityType.GetDerivedTypesInclusive())
-                .SelectMany(t => t.GetDeclaredNavigations());
+//         var entityType = jsonQueryExpression.EntityType;
+//         var textTypeMapping = _typeMappingSource.FindMapping(typeof(string));
+//
+//         // TODO: Refactor this out
+//         // Calculate the table alias for the json_each expression based on the last named path segment
+//         // (or the JSON column name if there are none)
+//         var lastNamedPathSegment = jsonQueryExpression.Path.LastOrDefault(ps => ps.PropertyName is not null);
+//         var tableAlias = char.ToLowerInvariant((lastNamedPathSegment.PropertyName ?? jsonQueryExpression.JsonColumn.Name)[0]).ToString();
+//
+//         // Handling a non-primitive JSON array is complicated on SQLite; unlike SQL Server OPENJSON and PostgreSQL jsonb_to_recordset,
+//         // SQLite's json_each can only project elements of the array, and not properties within those elements. For example:
+//         // SELECT value FROM json_each('[{"a":1,"b":"foo"}, {"a":2,"b":"bar"}]')
+//         // This will return two rows, each with a string column representing an array element (i.e. {"a":1,"b":"foo"}). To decompose that
+//         // into a and b columns, a further extraction is needed:
+//         // SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each('[{"a":1,"b":"foo"}, {"a":2,"b":"bar"}]')
+//
+//         // We therefore generate a minimal subquery projecting out all the properties and navigations, wrapped by a SelectExpression
+//         // containing that:
+//         // SELECT ...
+//         // FROM (SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each(<JSON column>, <path>)) AS j
+//         // WHERE j.a = 8;
+//
+//         // Unfortunately, while the subquery projects the entity, our EntityProjectionExpression currently supports only bare
+//         // ColumnExpression (the above requires JsonScalarExpression). So we hack as if the subquery projects an anonymous type instead,
+//         // with a member for each JSON property that needs to be projected. We then wrap it with a SelectExpression the projects a proper
+//         // EntityProjectionExpression.
+//
+//         var jsonTableExpression = new MySqlJsonTableExpression(tableAlias, jsonQueryExpression.JsonColumn, jsonQueryExpression.Path);
+//
+// #pragma warning disable EF1001 // Internal EF Core API usage.
+//         var selectExpression = new SelectExpression(
+//             jsonQueryExpression,
+//             jsonTableExpression,
+//             "key",
+//             typeof(uint),
+//             _typeMappingSource.FindMapping(typeof(uint))!);
+// #pragma warning restore EF1001 // Internal EF Core API usage.
+//
+//         selectExpression.AppendOrdering(
+//             new OrderingExpression(
+//                 selectExpression.CreateColumnExpression(
+//                     jsonTableExpression,
+//                     "key",
+//                     typeof(uint),
+//                     typeMapping: _typeMappingSource.FindMapping(typeof(uint)),
+//                     columnNullable: false),
+//                 ascending: true));
+//
+//         var propertyJsonScalarExpression = new Dictionary<ProjectionMember, Expression>();
+//
+//         var jsonColumn = selectExpression.CreateColumnExpression(
+//             jsonTableExpression, "value", typeof(string), _typeMappingSource.FindMapping(typeof(string))); // TODO: nullable?
+//
+//         var containerColumnName = entityType.GetContainerColumnName();
+//         Check.DebugAssert(containerColumnName is not null, "JsonQueryExpression to entity type without a container column name");
+//
+//         // First step: build a SelectExpression that will execute json_each and project all properties and navigations out, e.g.
+//         // (SELECT value ->> 'a' AS a, value ->> 'b' AS b FROM json_each(c."JsonColumn", '$.Something.SomeCollection')
+//
+//         // We're only interested in properties which actually exist in the JSON, filter out uninteresting shadow keys
+//         foreach (var property in GetAllPropertiesInHierarchy(entityType))
+//         {
+//             if (property.GetJsonPropertyName() is string jsonPropertyName)
+//             {
+//                 // HACK: currently the only way to project multiple values from a SelectExpression is to simulate a Select out to an anonymous
+//                 // type; this requires the MethodInfos of the anonymous type properties, from which the projection alias gets taken.
+//                 // So we create fake members to hold the JSON property name for the alias.
+//                 var projectionMember = new ProjectionMember().Append(new FakeMemberInfo(jsonPropertyName));
+//
+//                 propertyJsonScalarExpression[projectionMember] = new JsonScalarExpression(
+//                     jsonColumn,
+//                     new[] { new PathSegment(property.GetJsonPropertyName()!) },
+//                     property.ClrType.UnwrapNullableType(),
+//                     property.GetRelationalTypeMapping(),
+//                     property.IsNullable);
+//             }
+//         }
+//
+//         foreach (var navigation in GetAllNavigationsInHierarchy(jsonQueryExpression.EntityType)
+//                      .Where(
+//                          n => n.ForeignKey.IsOwnership
+//                              && n.TargetEntityType.IsMappedToJson()
+//                              && n.ForeignKey.PrincipalToDependent == n))
+//         {
+//             var jsonNavigationName = navigation.TargetEntityType.GetJsonPropertyName();
+//             Check.DebugAssert(jsonNavigationName is not null, "Invalid navigation found on JSON-mapped entity");
+//
+//             var projectionMember = new ProjectionMember().Append(new FakeMemberInfo(jsonNavigationName));
+//
+//             propertyJsonScalarExpression[projectionMember] = new JsonScalarExpression(
+//                 jsonColumn,
+//                 new[] { new PathSegment(jsonNavigationName) },
+//                 typeof(string),
+//                 textTypeMapping,
+//                 !navigation.ForeignKey.IsRequiredDependent);
+//         }
+//
+//         selectExpression.ReplaceProjection(propertyJsonScalarExpression);
+//
+//         // Second step: push the above SelectExpression down to a subquery, and project an entity projection from the outer
+//         // SelectExpression, i.e.
+//         // SELECT "t"."a", "t"."b"
+//         // FROM (SELECT value ->> 'a' ... FROM json_each(...))
+//
+//         selectExpression.PushdownIntoSubquery();
+//         var subquery = selectExpression.Tables[0];
+//
+// #pragma warning disable EF1001 // Internal EF Core API usage.
+//         var newOuterSelectExpression = new SelectExpression(
+//             jsonQueryExpression,
+//             subquery,
+//             "key",
+//             typeof(uint),
+//             _typeMappingSource.FindMapping(typeof(uint))!);
+// #pragma warning restore EF1001 // Internal EF Core API usage.
+//
+//         newOuterSelectExpression.AppendOrdering(
+//             new OrderingExpression(
+//                 selectExpression.CreateColumnExpression(
+//                     subquery,
+//                     "key",
+//                     typeof(uint),
+//                     typeMapping: _typeMappingSource.FindMapping(typeof(uint)),
+//                     columnNullable: false),
+//                 ascending: true));
+//
+//         return new ShapedQueryExpression(
+//             newOuterSelectExpression,
+//             new RelationalStructuralTypeShaperExpression(
+//                 jsonQueryExpression.EntityType,
+//                 new ProjectionBindingExpression(
+//                     newOuterSelectExpression,
+//                     new ProjectionMember(),
+//                     typeof(ValueBuffer)),
+//                 false));
+//
+//         // TODO: Move these to IEntityType?
+//         static IEnumerable<IProperty> GetAllPropertiesInHierarchy(IEntityType entityType)
+//             => entityType.GetAllBaseTypes().Concat(entityType.GetDerivedTypesInclusive())
+//                 .SelectMany(t => t.GetDeclaredProperties());
+//
+//         static IEnumerable<INavigation> GetAllNavigationsInHierarchy(IEntityType entityType)
+//             => entityType.GetAllBaseTypes().Concat(entityType.GetDerivedTypesInclusive())
+//                 .SelectMany(t => t.GetDeclaredNavigations());
     }
 
     protected override ShapedQueryExpression TranslatePrimitiveCollection(SqlExpression sqlExpression, IProperty property, string tableAlias)
@@ -415,9 +425,15 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
                 }
                 : null);
 
-        // Enabling this can crash MySQL 8.0 after some time:
-        // if (elementTypeMapping is null)
-        //     return null;
+
+        // Using primitive collections in parameters that are used as the JSON source argument for JSON_TABLE(source, ...) can crash
+        // MySQL 8.0.x somewhere later down the line.
+        if (elementTypeMapping is null &&
+            _options.ServerVersion.Supports.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash &&
+            WorkaroundMySql8EngineCrashWhenUsingJsonTableWithPrimitiveCollectionInParameters)
+        {
+            return null;
+        }
 
         var elementClrType = sqlExpression.Type.GetSequenceType();
 
@@ -438,7 +454,7 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
             columnTypeMapping: elementTypeMapping,
             isElementNullable,
             identifierColumnName: "key",
-            identifierColumnType: typeof(int),
+            identifierColumnType: typeof(uint),
             identifierColumnTypeMapping: _typeMappingSource.FindMapping(typeof(uint)));
 #pragma warning restore EF1001 // Internal EF Core API usage.
 
@@ -456,8 +472,8 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
                 selectExpression.CreateColumnExpression(
                     jsonTableExpression,
                     "key",
-                    typeof(int),
-                    typeMapping: _typeMappingSource.FindMapping(typeof(int)),
+                    typeof(uint),
+                    typeMapping: _typeMappingSource.FindMapping(typeof(uint)),
                     columnNullable: false),
                 ascending: true));
 
@@ -528,9 +544,9 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
         {
             switch (expression)
             {
-                case MySqlJsonTableExpression { Name: "JSON_TABLE", Schema: null, IsBuiltIn: true } jsonEachExpression
-                    when TryGetInferredTypeMapping(jsonEachExpression, "value", out var typeMapping):
-                    return ApplyTypeMappingsOnJsonEachExpression(jsonEachExpression, typeMapping);
+                case MySqlJsonTableExpression { Name: "JSON_TABLE", Schema: null, IsBuiltIn: true } jsonTableExpression
+                    when TryGetInferredTypeMapping(jsonTableExpression, "value", out var typeMapping):
+                    return ApplyTypeMappingsOnJsonTableExpression(jsonTableExpression, typeMapping);
 
                 // Above, we applied the type mapping the the parameter that JSON_TABLE accepts as an argument.
                 // But the inferred type mapping also needs to be applied as a SQL conversion on the column projections coming out of the
@@ -542,8 +558,8 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
 
                     foreach (var table in selectExpression.Tables)
                     {
-                        if (table is TableValuedFunctionExpression { Name: "JSON_TABLE", Schema: null, IsBuiltIn: true } jsonEachExpression
-                            && TryGetInferredTypeMapping(jsonEachExpression, "value", out var inferredTypeMapping))
+                        if (table is TableValuedFunctionExpression { Name: "JSON_TABLE", Schema: null, IsBuiltIn: true } jsonTableExpression
+                            && TryGetInferredTypeMapping(jsonTableExpression, "value", out var inferredTypeMapping))
                         {
                             if (previousSelectInferredTypeMappings is null)
                             {
@@ -551,7 +567,7 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
                                 _currentSelectInferredTypeMappings = new Dictionary<TableExpressionBase, RelationalTypeMapping>();
                             }
 
-                            _currentSelectInferredTypeMappings![jsonEachExpression] = inferredTypeMapping;
+                            _currentSelectInferredTypeMappings![jsonTableExpression] = inferredTypeMapping;
                         }
                     }
 
@@ -584,7 +600,7 @@ public class MySqlQueryableMethodTranslatingExpressionVisitor : RelationalQuerya
         ///     any release. You should only use it directly in your code with extreme caution and knowing that
         ///     doing so can result in application failures when updating to a new Entity Framework Core release.
         /// </summary>
-        protected virtual TableValuedFunctionExpression ApplyTypeMappingsOnJsonEachExpression(
+        protected virtual TableValuedFunctionExpression ApplyTypeMappingsOnJsonTableExpression(
             MySqlJsonTableExpression jsonTableExpression,
             RelationalTypeMapping inferredTypeMapping)
         {
