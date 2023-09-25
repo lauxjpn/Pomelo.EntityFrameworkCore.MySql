@@ -21,7 +21,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` longtext PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` longtext PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = 'a') = 2
 LIMIT 2
 """);
@@ -37,7 +40,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` int PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` int PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = 1) = 2
 LIMIT 2
 """);
@@ -53,7 +59,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` bigint PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` bigint PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = 1) = 2
 LIMIT 2
 """);
@@ -69,7 +78,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` smallint PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` smallint PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = 1) = 2
 LIMIT 2
 """);
@@ -89,7 +101,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` double PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` double PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = 1.0) = 2
 LIMIT 2
 """);
@@ -105,7 +120,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` float PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` float PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = 1) = 2
 LIMIT 2
 """);
@@ -121,7 +139,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` decimal(65,30) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` decimal(65,30) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = 1.0) = 2
 LIMIT 2
 """);
@@ -137,7 +158,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` datetime(6) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` datetime(6) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = TIMESTAMP '2023-01-01 12:30:00') = 2
 LIMIT 2
 """);
@@ -153,7 +177,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` datetime(6) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` datetime(6) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = TIMESTAMP '2023-01-01 12:30:00.123') = 2
 LIMIT 2
 """);
@@ -169,7 +196,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` datetime(6) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` datetime(6) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = TIMESTAMP '2023-01-01 12:30:00.123456') = 2
 LIMIT 2
 """);
@@ -185,7 +215,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` date PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` date PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = DATE '2023-01-01') = 2
 LIMIT 2
 """);
@@ -201,7 +234,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` time(6) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` time(6) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = TIME '12:30:00') = 2
 LIMIT 2
 """);
@@ -217,7 +253,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` time(6) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` time(6) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = TIME '12:30:00.123') = 2
 LIMIT 2
 """);
@@ -233,7 +272,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` time(6) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` time(6) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = TIME '12:30:00.123456') = 2
 LIMIT 2
 """);
@@ -249,7 +291,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` datetime(6) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` datetime(6) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = TIMESTAMP '2023-01-01 10:30:00') = 2
 LIMIT 2
 """);
@@ -265,7 +310,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` tinyint(1) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` tinyint(1) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value`) = 2
 LIMIT 2
 """);
@@ -281,7 +329,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` char(36) PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` char(36) PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = 'dc8c903d-d655-4144-a0fd-358099d40ae1') = 2
 LIMIT 2
 """);
@@ -293,12 +344,15 @@ LIMIT 2
         await base.Array_of_byte_array();
 
         AssertSql(
-            """
+"""
 SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` longblob PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` longblob PATH '$[0]'
+    )) AS `s`
     WHERE FROM_BASE64(`s`.`value`) = 0x0102) = 2
 LIMIT 2
 """);
@@ -314,7 +368,10 @@ SELECT `t`.`Id`, `t`.`Ints`, `t`.`SomeArray`
 FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (`value` int PATH '$[0]')) AS `s`
+    FROM JSON_TABLE(`t`.`SomeArray`, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` int PATH '$[0]'
+    )) AS `s`
     WHERE `s`.`value` = 0) = 2
 LIMIT 2
 """);
@@ -348,13 +405,14 @@ LIMIT 2
         await base.Constant_with_inferred_value_converter();
 
         AssertSql(
-            """
-SELECT TOP(2) [t].[Id], [t].[Ints], [t].[PropertyWithValueConverter]
-FROM [TestEntity] AS [t]
+"""
+SELECT `t`.`Id`, `t`.`Ints`, `t`.`PropertyWithValueConverter`
+FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM (VALUES (CAST(1 AS int)), (8)) AS [v]([Value])
-    WHERE [v].[Value] = [t].[PropertyWithValueConverter]) = 1
+    FROM (SELECT CAST(1 AS signed) AS `Value` UNION ALL VALUES ROW(8)) AS `v`
+    WHERE `v`.`Value` = `t`.`PropertyWithValueConverter`) = 1
+LIMIT 2
 """);
     }
 
@@ -363,13 +421,14 @@ WHERE (
         await base.Inline_collection_in_query_filter();
 
         AssertSql(
-            """
-SELECT TOP(2) [t].[Id], [t].[Ints]
-FROM [TestEntity] AS [t]
+"""
+SELECT `t`.`Id`, `t`.`Ints`
+FROM `TestEntity` AS `t`
 WHERE (
     SELECT COUNT(*)
-    FROM (VALUES (CAST(1 AS int)), (2), (3)) AS [v]([Value])
-    WHERE [v].[Value] > [t].[Id]) = 1
+    FROM (SELECT CAST(1 AS signed) AS `Value` UNION ALL VALUES ROW(2), ROW(3)) AS `v`
+    WHERE `v`.`Value` > `t`.`Id`) = 1
+LIMIT 2
 """);
     }
 
@@ -402,3 +461,11 @@ WHERE JSON_VALUE(JSON_VALUE([t].[Owned], '$.Strings'), '$[1]') = N'bar'
     protected override ITestStoreFactory TestStoreFactory
         => MySqlTestStoreFactory.Instance;
 }
+
+
+
+
+
+
+
+
