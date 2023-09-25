@@ -95,5 +95,6 @@ namespace Pomelo.EntityFrameworkCore.MySql.Infrastructure
         public virtual bool OffsetReferencesOuterQuery => false;
 
         public virtual bool JsonTableImplementationWithoutBugs => JsonTable;
+        public virtual bool JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash => JsonTable;
     }
 }
