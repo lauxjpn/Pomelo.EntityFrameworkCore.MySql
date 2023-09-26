@@ -205,7 +205,6 @@ WHERE `p`.`Id` NOT IN (2, 999)
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_Count(bool async)
     {
         await base.Parameter_collection_Count(async);
@@ -226,7 +225,6 @@ WHERE (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_of_ints_Contains(bool async)
     {
         await base.Parameter_collection_of_ints_Contains(async);
@@ -247,7 +245,6 @@ WHERE `p`.`Int` IN (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_of_nullable_ints_Contains_int(bool async)
     {
         await base.Parameter_collection_of_nullable_ints_Contains_int(async);
@@ -268,7 +265,6 @@ WHERE `p`.`Int` IN (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_of_nullable_ints_Contains_nullable_int(bool async)
     {
         await base.Parameter_collection_of_nullable_ints_Contains_nullable_int(async);
@@ -289,7 +285,6 @@ WHERE EXISTS (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_of_strings_Contains_nullable_string(bool async)
     {
         await base.Parameter_collection_of_strings_Contains_nullable_string(async);
@@ -310,7 +305,6 @@ WHERE EXISTS (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_of_strings_Contains_non_nullable_string(bool async)
     {
         await base.Parameter_collection_of_strings_Contains_non_nullable_string(async);
@@ -331,7 +325,6 @@ WHERE `p`.`String` IN (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_of_DateTimes_Contains(bool async)
     {
         await base.Parameter_collection_of_DateTimes_Contains(async);
@@ -352,7 +345,6 @@ WHERE `p`.`DateTime` IN (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_of_bools_Contains(bool async)
     {
         await base.Parameter_collection_of_bools_Contains(async);
@@ -373,7 +365,6 @@ WHERE `p`.`Bool` IN (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_of_enums_Contains(bool async)
     {
         await base.Parameter_collection_of_enums_Contains(async);
@@ -763,7 +754,6 @@ ORDER BY `p`.`Id`
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Column_collection_Join_parameter_collection(bool async)
     {
         await base.Column_collection_Join_parameter_collection(async);
@@ -805,7 +795,6 @@ WHERE (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_Concat_column_collection(bool async)
     {
         await base.Parameter_collection_Concat_column_collection(async);
@@ -834,7 +823,6 @@ WHERE (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Column_collection_Union_parameter_collection(bool async)
     {
         await base.Column_collection_Union_parameter_collection(async);
@@ -943,7 +931,6 @@ WHERE `p`.`Ints` = '[1,10]'
         AssertSql();
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_in_subquery_Union_column_collection_as_compiled_query(bool async)
     {
         await base.Parameter_collection_in_subquery_Union_column_collection_as_compiled_query(async);
@@ -977,7 +964,6 @@ WHERE (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_in_subquery_Union_column_collection(bool async)
     {
         await base.Parameter_collection_in_subquery_Union_column_collection(async);
@@ -1006,7 +992,6 @@ WHERE (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_in_subquery_Union_column_collection_nested(bool async)
     {
         await base.Parameter_collection_in_subquery_Union_column_collection_nested(async);
@@ -1050,7 +1035,28 @@ WHERE (
 
     public override void Parameter_collection_in_subquery_and_Convert_as_compiled_query()
     {
-        base.Parameter_collection_in_subquery_and_Convert_as_compiled_query();
+        // base.Parameter_collection_in_subquery_and_Convert_as_compiled_query();
+
+        // The array indexing is translated as a subquery over e.g. OPENJSON with LIMIT/OFFSET.
+        // Since there's a CAST over that, the type mapping inference from the other side (p.String) doesn't propagate inside to the
+        // subquery. In this case, the CAST operand gets the default CLR type mapping, but that's object in this case.
+        // We should apply the default type mapping to the parameter, but need to figure out the exact rules when to do this.
+        var query = EF.CompileQuery(
+            (PrimitiveCollectionsContext context, object[] parameters)
+                => context.Set<PrimitiveCollectionsEntity>().Where(p => p.String == (string)parameters[0]));
+
+        using var context = Fixture.CreateContext();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => query(context, new[] { "foo" }).ToList());
+
+        if (AppContext.TryGetSwitch("Pomelo.EntityFrameworkCore.MySql.Issue1790Throws", out var enabled) && enabled)
+        {
+            Assert.Contains("Using JSON_TABLE can crash MySQL 8.", exception.Message);
+        }
+        else
+        {
+            Assert.Contains("in the SQL tree does not have a type mapping assigned", exception.Message);
+        }
 
         AssertSql();
     }
@@ -1060,10 +1066,16 @@ WHERE (
         var message = (await Assert.ThrowsAsync<InvalidOperationException>(
             () => base.Parameter_collection_in_subquery_Union_another_parameter_collection_as_compiled_query(async))).Message;
 
-        Assert.Equal(RelationalStrings.SetOperationsRequireAtLeastOneSideWithValidTypeMapping("Union"), message);
+        if (AppContext.TryGetSwitch("Pomelo.EntityFrameworkCore.MySql.Issue1790Throws", out var enabled) && enabled)
+        {
+            Assert.Contains("Using JSON_TABLE can crash MySQL 8.", message);
+        }
+        else
+        {
+            Assert.Equal(RelationalStrings.SetOperationsRequireAtLeastOneSideWithValidTypeMapping("Union"), message);
+        }
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Parameter_collection_in_subquery_Count_as_compiled_query(bool async)
     {
         await base.Parameter_collection_in_subquery_Count_as_compiled_query(async);
@@ -1089,7 +1101,6 @@ WHERE (
 """);
     }
 
-    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash))]
     public override async Task Column_collection_in_subquery_Union_parameter_collection(bool async)
     {
         await base.Column_collection_in_subquery_Union_parameter_collection(async);
