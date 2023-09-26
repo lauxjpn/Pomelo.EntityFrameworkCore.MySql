@@ -1035,28 +1035,7 @@ WHERE (
 
     public override void Parameter_collection_in_subquery_and_Convert_as_compiled_query()
     {
-        // base.Parameter_collection_in_subquery_and_Convert_as_compiled_query();
-
-        // The array indexing is translated as a subquery over e.g. OPENJSON with LIMIT/OFFSET.
-        // Since there's a CAST over that, the type mapping inference from the other side (p.String) doesn't propagate inside to the
-        // subquery. In this case, the CAST operand gets the default CLR type mapping, but that's object in this case.
-        // We should apply the default type mapping to the parameter, but need to figure out the exact rules when to do this.
-        var query = EF.CompileQuery(
-            (PrimitiveCollectionsContext context, object[] parameters)
-                => context.Set<PrimitiveCollectionsEntity>().Where(p => p.String == (string)parameters[0]));
-
-        using var context = Fixture.CreateContext();
-
-        var exception = Assert.Throws<InvalidOperationException>(() => query(context, new[] { "foo" }).ToList());
-
-        if (AppContext.TryGetSwitch("Pomelo.EntityFrameworkCore.MySql.Issue1790Throws", out var enabled) && enabled)
-        {
-            Assert.Contains("Using JSON_TABLE can crash MySQL 8.", exception.Message);
-        }
-        else
-        {
-            Assert.Contains("in the SQL tree does not have a type mapping assigned", exception.Message);
-        }
+        base.Parameter_collection_in_subquery_and_Convert_as_compiled_query();
 
         AssertSql();
     }
@@ -1066,14 +1045,7 @@ WHERE (
         var message = (await Assert.ThrowsAsync<InvalidOperationException>(
             () => base.Parameter_collection_in_subquery_Union_another_parameter_collection_as_compiled_query(async))).Message;
 
-        if (AppContext.TryGetSwitch("Pomelo.EntityFrameworkCore.MySql.Issue1790Throws", out var enabled) && enabled)
-        {
-            Assert.Contains("Using JSON_TABLE can crash MySQL 8.", message);
-        }
-        else
-        {
-            Assert.Equal(RelationalStrings.SetOperationsRequireAtLeastOneSideWithValidTypeMapping("Union"), message);
-        }
+        Assert.Equal(RelationalStrings.SetOperationsRequireAtLeastOneSideWithValidTypeMapping("Union"), message);
     }
 
     public override async Task Parameter_collection_in_subquery_Count_as_compiled_query(bool async)
