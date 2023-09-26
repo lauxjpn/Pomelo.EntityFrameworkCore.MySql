@@ -108,11 +108,18 @@ FROM `Orders` AS `o`");
         public override async Task Correlated_collection_after_distinct_with_complex_projection_not_containing_original_identifier(bool async)
         {
             // Identifier set for Distinct. Issue #24440.
-            Assert.Equal(
-                RelationalStrings.InsufficientInformationToIdentifyElementOfCollectionJoin,
-                (await Assert.ThrowsAsync<InvalidOperationException>(
+            var message = (await Assert.ThrowsAsync<InvalidOperationException>(
                     () => base.Correlated_collection_after_distinct_with_complex_projection_not_containing_original_identifier(async)))
-                .Message);
+                .Message;
+
+            if (AppContext.TryGetSwitch("Pomelo.EntityFrameworkCore.MySql.Issue1790Throws", out var enabled) && enabled)
+            {
+                Assert.Contains("Using JSON_TABLE can crash MySQL 8.", message);
+            }
+            else
+            {
+                Assert.Equal(RelationalStrings.InsufficientInformationToIdentifyElementOfCollectionJoin, message);
+            }
 
             AssertSql();
         }
