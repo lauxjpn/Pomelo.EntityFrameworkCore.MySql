@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Pomelo.EntityFrameworkCore.MySql.FunctionalTests.TestUtilities;
@@ -28,25 +28,49 @@ namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.Query
 """
 SELECT `l`.`Id`, `l`.`Tenant`
 FROM `ListFilter` AS `l`
-WHERE FALSE
+WHERE `l`.`Tenant` IN (
+    SELECT `e`.`value`
+    FROM JSON_TABLE(NULL, '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` int PATH '$[0]'
+    )) AS `e`
+)
 """,
                 //
                 """
 SELECT `l`.`Id`, `l`.`Tenant`
 FROM `ListFilter` AS `l`
-WHERE FALSE
+WHERE `l`.`Tenant` IN (
+    SELECT `e`.`value`
+    FROM JSON_TABLE('[]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` int PATH '$[0]'
+    )) AS `e`
+)
 """,
                 //
                 """
 SELECT `l`.`Id`, `l`.`Tenant`
 FROM `ListFilter` AS `l`
-WHERE `l`.`Tenant` = 1
+WHERE `l`.`Tenant` IN (
+    SELECT `e`.`value`
+    FROM JSON_TABLE('[1]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` int PATH '$[0]'
+    )) AS `e`
+)
 """,
                 //
                 """
 SELECT `l`.`Id`, `l`.`Tenant`
 FROM `ListFilter` AS `l`
-WHERE `l`.`Tenant` IN (2, 3)
+WHERE `l`.`Tenant` IN (
+    SELECT `e`.`value`
+    FROM JSON_TABLE('[2,3]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` int PATH '$[0]'
+    )) AS `e`
+)
 """);
         }
 
@@ -59,3 +83,7 @@ WHERE `l`.`Tenant` IN (2, 3)
         }
     }
 }
+
+
+
+

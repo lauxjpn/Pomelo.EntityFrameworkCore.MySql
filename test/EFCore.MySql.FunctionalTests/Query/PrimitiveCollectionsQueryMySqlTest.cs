@@ -211,13 +211,11 @@ WHERE `p`.`Id` NOT IN (2, 999)
 
         AssertSql(
 """
-@__ids_0='[2,999]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (
     SELECT COUNT(*)
-    FROM JSON_TABLE(@__ids_0, '$[*]' COLUMNS (
+    FROM JSON_TABLE('[2,999]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` int PATH '$[0]'
     )) AS `i`
@@ -231,13 +229,11 @@ WHERE (
 
         AssertSql(
 """
-@__ints_0='[10,999]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE `p`.`Int` IN (
     SELECT `i`.`value`
-    FROM JSON_TABLE(@__ints_0, '$[*]' COLUMNS (
+    FROM JSON_TABLE('[10,999]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` int PATH '$[0]'
     )) AS `i`
@@ -251,13 +247,11 @@ WHERE `p`.`Int` IN (
 
         AssertSql(
 """
-@__nullableInts_0='[10,999]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE `p`.`Int` IN (
     SELECT `n`.`value`
-    FROM JSON_TABLE(@__nullableInts_0, '$[*]' COLUMNS (
+    FROM JSON_TABLE('[10,999]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` int PATH '$[0]'
     )) AS `n`
@@ -271,13 +265,11 @@ WHERE `p`.`Int` IN (
 
         AssertSql(
 """
-@__nullableInts_0='[null,999]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE EXISTS (
     SELECT 1
-    FROM JSON_TABLE(@__nullableInts_0, '$[*]' COLUMNS (
+    FROM JSON_TABLE('[null,999]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` int PATH '$[0]'
     )) AS `n`
@@ -291,13 +283,11 @@ WHERE EXISTS (
 
         AssertSql(
 """
-@__strings_0='["999",null]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE EXISTS (
     SELECT 1
-    FROM JSON_TABLE(@__strings_0, '$[*]' COLUMNS (
+    FROM JSON_TABLE('["999",null]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` longtext PATH '$[0]'
     )) AS `s`
@@ -311,13 +301,11 @@ WHERE EXISTS (
 
         AssertSql(
 """
-@__strings_0='["10","999"]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE `p`.`String` IN (
     SELECT `s`.`value`
-    FROM JSON_TABLE(@__strings_0, '$[*]' COLUMNS (
+    FROM JSON_TABLE('["10","999"]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` longtext PATH '$[0]'
     )) AS `s`
@@ -331,13 +319,11 @@ WHERE `p`.`String` IN (
 
         AssertSql(
 """
-@__dateTimes_0='["2020-01-10T12:30:00Z","9999-01-01T00:00:00Z"]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE `p`.`DateTime` IN (
     SELECT `d`.`value`
-    FROM JSON_TABLE(@__dateTimes_0, '$[*]' COLUMNS (
+    FROM JSON_TABLE('["2020-01-10T12:30:00Z","9999-01-01T00:00:00Z"]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` datetime(6) PATH '$[0]'
     )) AS `d`
@@ -351,13 +337,11 @@ WHERE `p`.`DateTime` IN (
 
         AssertSql(
 """
-@__bools_0='[true]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE `p`.`Bool` IN (
     SELECT `b`.`value`
-    FROM JSON_TABLE(@__bools_0, '$[*]' COLUMNS (
+    FROM JSON_TABLE('[true]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` tinyint(1) PATH '$[0]'
     )) AS `b`
@@ -371,13 +355,11 @@ WHERE `p`.`Bool` IN (
 
         AssertSql(
 """
-@__enums_0='[0,3]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE `p`.`Enum` IN (
     SELECT `e`.`value`
-    FROM JSON_TABLE(@__enums_0, '$[*]' COLUMNS (
+    FROM JSON_TABLE('[0,3]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` int PATH '$[0]'
     )) AS `e`
@@ -760,8 +742,6 @@ ORDER BY `p`.`Id`
 
         AssertSql(
 """
-@__ints_0='[11,111]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (
@@ -770,7 +750,7 @@ WHERE (
         `key` FOR ORDINALITY,
         `value` int PATH '$[0]'
     )) AS `i`
-    INNER JOIN JSON_TABLE(@__ints_0, '$[*]' COLUMNS (
+    INNER JOIN JSON_TABLE('[11,111]', '$[*]' COLUMNS (
         `key` FOR ORDINALITY,
         `value` int PATH '$[0]'
     )) AS `i0` ON `i`.`value` = `i0`.`value`) = 2
@@ -801,15 +781,13 @@ WHERE (
 
         AssertSql(
 """
-@__ints_0='[11,111]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (
     SELECT COUNT(*)
     FROM (
         SELECT `i`.`value`
-        FROM JSON_TABLE(@__ints_0, '$[*]' COLUMNS (
+        FROM JSON_TABLE('[11,111]', '$[*]' COLUMNS (
             `key` FOR ORDINALITY,
             `value` int PATH '$[0]'
         )) AS `i`
@@ -829,8 +807,6 @@ WHERE (
 
         AssertSql(
 """
-@__ints_0='[11,111]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (
@@ -843,7 +819,7 @@ WHERE (
         )) AS `i`
         UNION
         SELECT `i0`.`value`
-        FROM JSON_TABLE(@__ints_0, '$[*]' COLUMNS (
+        FROM JSON_TABLE('[11,111]', '$[*]' COLUMNS (
             `key` FOR ORDINALITY,
             `value` int PATH '$[0]'
         )) AS `i0`
@@ -937,8 +913,6 @@ WHERE `p`.`Ints` = '[1,10]'
 
         AssertSql(
 """
-@__ints='[10,111]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (
@@ -947,7 +921,7 @@ WHERE (
         SELECT `t`.`value`
         FROM (
             SELECT `i`.`value`, `i`.`key`
-            FROM JSON_TABLE(@__ints, '$[*]' COLUMNS (
+            FROM JSON_TABLE('[10,111]', '$[*]' COLUMNS (
                 `key` FOR ORDINALITY,
                 `value` int PATH '$[0]'
             )) AS `i`
@@ -970,15 +944,13 @@ WHERE (
 
         AssertSql(
 """
-@__Skip_0='[111]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (
     SELECT COUNT(*)
     FROM (
         SELECT `s`.`value`
-        FROM JSON_TABLE(@__Skip_0, '$[*]' COLUMNS (
+        FROM JSON_TABLE('[111]', '$[*]' COLUMNS (
             `key` FOR ORDINALITY,
             `value` int PATH '$[0]'
         )) AS `s`
@@ -998,15 +970,13 @@ WHERE (
 
         AssertSql(
 """
-@__Skip_0='[111]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (
     SELECT COUNT(*)
     FROM (
         SELECT `s`.`value`
-        FROM JSON_TABLE(@__Skip_0, '$[*]' COLUMNS (
+        FROM JSON_TABLE('[111]', '$[*]' COLUMNS (
             `key` FOR ORDINALITY,
             `value` int PATH '$[0]'
         )) AS `s`
@@ -1054,15 +1024,13 @@ WHERE (
 
         AssertSql(
 """
-@__ints='[10,111]' (Size = 4000)
-
 SELECT COUNT(*)
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (
     SELECT COUNT(*)
     FROM (
         SELECT `i`.`value`, `i`.`key`, `i`.`value` AS `value0`
-        FROM JSON_TABLE(@__ints, '$[*]' COLUMNS (
+        FROM JSON_TABLE('[10,111]', '$[*]' COLUMNS (
             `key` FOR ORDINALITY,
             `value` int PATH '$[0]'
         )) AS `i`
@@ -1079,8 +1047,6 @@ WHERE (
 
         AssertSql(
 """
-@__ints_0='[10,111]' (Size = 4000)
-
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (
@@ -1098,7 +1064,7 @@ WHERE (
         ) AS `t`
         UNION
         SELECT `i0`.`value`
-        FROM JSON_TABLE(@__ints_0, '$[*]' COLUMNS (
+        FROM JSON_TABLE('[10,111]', '$[*]' COLUMNS (
             `key` FOR ORDINALITY,
             `value` int PATH '$[0]'
         )) AS `i0`
@@ -1375,4 +1341,14 @@ WHERE `p`.`Id` IN (2, 999)
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
 
