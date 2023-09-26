@@ -26,17 +26,19 @@ namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.Query
         protected override bool CanExecuteQueryString
             => true;
 
-        public override Task DateTimeOffset_Contains_Less_than_Greater_than(bool async)
+        public override async Task DateTimeOffset_Contains_Less_than_Greater_than(bool async)
         {
-            var dto = MySqlTestHelpers.GetExpectedValue(new DateTimeOffset(599898024001234567, new TimeSpan(1, 30, 0)));
-            var start = dto.AddDays(-1);
-            var end = dto.AddDays(1);
-            var dates = new[] { dto };
+            // var dto = MySqlTestHelpers.GetExpectedValue(new DateTimeOffset(599898024001234567, new TimeSpan(1, 30, 0)));
+            // var start = dto.AddDays(-1);
+            // var end = dto.AddDays(1);
+            // var dates = new[] { dto };
+            //
+            // return AssertQuery(
+            //     async,
+            //     ss => ss.Set<Mission>().Where(
+            //         m => start <= m.Timeline.Date && m.Timeline < end && dates.Contains(m.Timeline)));
 
-            return AssertQuery(
-                async,
-                ss => ss.Set<Mission>().Where(
-                    m => start <= m.Timeline.Date && m.Timeline < end && dates.Contains(m.Timeline)));
+            await base.DateTimeOffset_Contains_Less_than_Greater_than(async);
         }
 
         public override Task Where_datetimeoffset_milliseconds_parameter_and_constant(bool async)

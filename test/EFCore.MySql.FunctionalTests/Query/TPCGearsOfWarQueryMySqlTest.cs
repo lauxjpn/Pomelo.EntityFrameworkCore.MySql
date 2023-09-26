@@ -321,7 +321,13 @@ FROM (
     FROM `Officers` AS `o`
 ) AS `t`
 LEFT JOIN `Tags` AS `t0` ON (`t`.`Nickname` = `t0`.`GearNickName`) AND (`t`.`SquadId` = `t0`.`GearSquadId`)
-WHERE `t0`.`Id` IS NOT NULL AND `t0`.`Id` IN ('b39a6fba-9026-4d69-828e-fd7068673e57', '70534e05-782c-4052-8720-c2c54481ce5f', 'a8ad98f9-e023-4e2a-9a70-c2728455bd34', 'df36f493-463f-4123-83f9-6b135deeb7ba', '34c8d86e-a4ac-4be5-827f-584dda348a07', 'a7be028a-0cf2-448f-ab55-ce8bc5d8cf69')
+WHERE `t0`.`Id` IS NOT NULL AND EXISTS (
+    SELECT 1
+    FROM JSON_TABLE('["b39a6fba-9026-4d69-828e-fd7068673e57","70534e05-782c-4052-8720-c2c54481ce5f","a8ad98f9-e023-4e2a-9a70-c2728455bd34","df36f493-463f-4123-83f9-6b135deeb7ba","34c8d86e-a4ac-4be5-827f-584dda348a07","a7be028a-0cf2-448f-ab55-ce8bc5d8cf69"]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` char(36) PATH '$[0]'
+    )) AS `t1`
+    WHERE (`t1`.`value` = `t0`.`Id`) OR (`t1`.`value` IS NULL AND (`t0`.`Id` IS NULL)))
 """);
     }
 
@@ -346,7 +352,13 @@ FROM (
 ) AS `t`
 INNER JOIN `Cities` AS `c` ON `t`.`CityOfBirthName` = `c`.`Name`
 LEFT JOIN `Tags` AS `t0` ON (`t`.`Nickname` = `t0`.`GearNickName`) AND (`t`.`SquadId` = `t0`.`GearSquadId`)
-WHERE `c`.`Location` IS NOT NULL AND `t0`.`Id` IN ('b39a6fba-9026-4d69-828e-fd7068673e57', '70534e05-782c-4052-8720-c2c54481ce5f', 'a8ad98f9-e023-4e2a-9a70-c2728455bd34', 'df36f493-463f-4123-83f9-6b135deeb7ba', '34c8d86e-a4ac-4be5-827f-584dda348a07', 'a7be028a-0cf2-448f-ab55-ce8bc5d8cf69')
+WHERE `c`.`Location` IS NOT NULL AND EXISTS (
+    SELECT 1
+    FROM JSON_TABLE('["b39a6fba-9026-4d69-828e-fd7068673e57","70534e05-782c-4052-8720-c2c54481ce5f","a8ad98f9-e023-4e2a-9a70-c2728455bd34","df36f493-463f-4123-83f9-6b135deeb7ba","34c8d86e-a4ac-4be5-827f-584dda348a07","a7be028a-0cf2-448f-ab55-ce8bc5d8cf69"]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` char(36) PATH '$[0]'
+    )) AS `t1`
+    WHERE (`t1`.`value` = `t0`.`Id`) OR (`t1`.`value` IS NULL AND (`t0`.`Id` IS NULL)))
 """);
     }
 
@@ -370,7 +382,13 @@ FROM (
     FROM `Officers` AS `o`
 ) AS `t`
 LEFT JOIN `Tags` AS `t0` ON (`t`.`Nickname` = `t0`.`GearNickName`) AND (`t`.`SquadId` = `t0`.`GearSquadId`)
-WHERE `t0`.`Id` IS NOT NULL AND `t0`.`Id` IN ('b39a6fba-9026-4d69-828e-fd7068673e57', '70534e05-782c-4052-8720-c2c54481ce5f', 'a8ad98f9-e023-4e2a-9a70-c2728455bd34', 'df36f493-463f-4123-83f9-6b135deeb7ba', '34c8d86e-a4ac-4be5-827f-584dda348a07', 'a7be028a-0cf2-448f-ab55-ce8bc5d8cf69')
+WHERE `t0`.`Id` IS NOT NULL AND EXISTS (
+    SELECT 1
+    FROM JSON_TABLE('["b39a6fba-9026-4d69-828e-fd7068673e57","70534e05-782c-4052-8720-c2c54481ce5f","a8ad98f9-e023-4e2a-9a70-c2728455bd34","df36f493-463f-4123-83f9-6b135deeb7ba","34c8d86e-a4ac-4be5-827f-584dda348a07","a7be028a-0cf2-448f-ab55-ce8bc5d8cf69"]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` char(36) PATH '$[0]'
+    )) AS `t1`
+    WHERE (`t1`.`value` = `t0`.`Id`) OR (`t1`.`value` IS NULL AND (`t0`.`Id` IS NULL)))
 """);
     }
 
@@ -1866,7 +1884,6 @@ WHERE `t`.`LeaderNickname` = 'Marcus'
     public override async Task Where_compare_anonymous_types_with_uncorrelated_members(bool async)
     {
         await base.Where_compare_anonymous_types_with_uncorrelated_members(async);
-
         AssertSql(
 """
 SELECT `t`.`Nickname`
@@ -2912,7 +2929,13 @@ WHERE `c`.`Location` = @__value_0
 """
 SELECT `c`.`Name`, `c`.`Location`, `c`.`Nation`
 FROM `Cities` AS `c`
-WHERE `c`.`Location` IN ('Unknown', 'Jacinto''s location', 'Ephyra''s location')
+WHERE EXISTS (
+    SELECT 1
+    FROM JSON_TABLE('["Unknown","Jacinto\\u0027s location","Ephyra\\u0027s location"]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` longtext PATH '$[0]'
+    )) AS `c0`
+    WHERE (`c0`.`value` = `c`.`Location`) OR (`c0`.`value` IS NULL AND (`c`.`Location` IS NULL)))
 """);
     }
 
@@ -4122,7 +4145,13 @@ SELECT NOT EXISTS (
 """
 SELECT `t`.`Id`, `t`.`GearNickName`, `t`.`GearSquadId`, `t`.`IssueDate`, `t`.`Note`
 FROM `Tags` AS `t`
-WHERE `t`.`Id` IN ('d2c26679-562b-44d1-ab96-23d1775e0926', '23cbcf9b-ce14-45cf-aafa-2c2667ebfdd3', 'ab1b82d7-88db-42bd-a132-7eef9aa68af4')
+WHERE `t`.`Id` IN (
+    SELECT `i`.`value`
+    FROM JSON_TABLE('["d2c26679-562b-44d1-ab96-23d1775e0926","23cbcf9b-ce14-45cf-aafa-2c2667ebfdd3","ab1b82d7-88db-42bd-a132-7eef9aa68af4"]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` char(36) PATH '$[0]'
+    )) AS `i`
+)
 """);
     }
 
@@ -4784,7 +4813,13 @@ FROM (
     FROM `Officers` AS `o`
 ) AS `t`
 LEFT JOIN `Cities` AS `c` ON `t`.`AssignedCityName` = `c`.`Name`
-WHERE (`t`.`SquadId` < 2) AND (`c`.`Name` IS NULL OR (`c`.`Name` = 'Ephyra'))
+WHERE (`t`.`SquadId` < 2) AND EXISTS (
+    SELECT 1
+    FROM JSON_TABLE('["Ephyra",null]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` varchar(255) PATH '$[0]'
+    )) AS `c0`
+    WHERE (`c0`.`value` = `c`.`Name`) OR (`c0`.`value` IS NULL AND (`c`.`Name` IS NULL)))
 """);
     }
 
@@ -8085,7 +8120,13 @@ FROM (
     FROM `Officers` AS `o`
 ) AS `t`
 LEFT JOIN `Weapons` AS `w` ON `t`.`FullName` = `w`.`OwnerFullName`
-ORDER BY `t`.`Nickname`, `t`.`SquadId`
+ORDER BY COALESCE(`t`.`Nickname` IN (
+    SELECT `n`.`value`
+    FROM JSON_TABLE('[]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` varchar(255) PATH '$[0]'
+    )) AS `n`
+), FALSE) DESC, `t`.`Nickname`, `t`.`SquadId`
 """);
     }
 
@@ -8929,24 +8970,42 @@ WHERE (
 
     public override async Task DateTimeOffset_Contains_Less_than_Greater_than(bool async)
     {
-        var dto = MySqlTestHelpers.GetExpectedValue(new DateTimeOffset(599898024001234567, new TimeSpan(1, 30, 0)));
-        var start = dto.AddDays(-1);
-        var end = dto.AddDays(1);
-        var dates = new[] { dto };
+//         var dto = MySqlTestHelpers.GetExpectedValue(new DateTimeOffset(599898024001234567, new TimeSpan(1, 30, 0)));
+//         var start = dto.AddDays(-1);
+//         var end = dto.AddDays(1);
+//         var dates = new[] { dto };
+//
+//         await AssertQuery(
+//             async,
+//             ss => ss.Set<Mission>().Where(
+//                 m => start <= m.Timeline.Date && m.Timeline < end && dates.Contains(m.Timeline)));
+//
+//         AssertSql(
+// """
+// @__start_0='1902-01-01T08:30:00.1234560+00:00'
+// @__end_1='1902-01-03T08:30:00.1234560+00:00'
+//
+// SELECT `m`.`Id`, `m`.`CodeName`, `m`.`Date`, `m`.`Duration`, `m`.`Rating`, `m`.`Time`, `m`.`Timeline`
+// FROM `Missions` AS `m`
+// WHERE ((@__start_0 <= CONVERT(`m`.`Timeline`, date)) AND (`m`.`Timeline` < @__end_1)) AND (`m`.`Timeline` = TIMESTAMP '1902-01-02 08:30:00.123456')
+// """);
 
-        await AssertQuery(
-            async,
-            ss => ss.Set<Mission>().Where(
-                m => start <= m.Timeline.Date && m.Timeline < end && dates.Contains(m.Timeline)));
+        await base.DateTimeOffset_Contains_Less_than_Greater_than(async);
 
         AssertSql(
 """
-@__start_0='1902-01-01T08:30:00.1234560+00:00'
-@__end_1='1902-01-03T08:30:00.1234560+00:00'
+@__start_0='1902-01-01T10:00:00.1234567+01:30'
+@__end_1='1902-01-03T10:00:00.1234567+01:30'
 
 SELECT `m`.`Id`, `m`.`CodeName`, `m`.`Date`, `m`.`Duration`, `m`.`Rating`, `m`.`Time`, `m`.`Timeline`
 FROM `Missions` AS `m`
-WHERE ((@__start_0 <= CONVERT(`m`.`Timeline`, date)) AND (`m`.`Timeline` < @__end_1)) AND (`m`.`Timeline` = TIMESTAMP '1902-01-02 08:30:00.123456')
+WHERE ((@__start_0 <= CONVERT(`m`.`Timeline`, date)) AND (`m`.`Timeline` < @__end_1)) AND `m`.`Timeline` IN (
+    SELECT `d`.`value`
+    FROM JSON_TABLE('["1902-01-02T10:00:00.1234567+01:30"]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` datetime(6) PATH '$[0]'
+    )) AS `d`
+)
 """);
     }
 
@@ -9815,6 +9874,13 @@ FROM (
     SELECT `o`.`Nickname`, `o`.`SquadId`, `o`.`AssignedCityName`, `o`.`CityOfBirthName`, `o`.`FullName`, `o`.`HasSoulPatch`, `o`.`LeaderNickname`, `o`.`LeaderSquadId`, `o`.`Rank`, 'Officer' AS `Discriminator`
     FROM `Officers` AS `o`
 ) AS `t`
+ORDER BY `t`.`SquadId` IN (
+    SELECT `i`.`value`
+    FROM JSON_TABLE('[]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` int PATH '$[0]'
+    )) AS `i`
+)
 """);
     }
 
@@ -10806,7 +10872,13 @@ LIMIT @__p_0
 SELECT `w`.`Id`, `w`.`AmmunitionType`, `w`.`IsAutomatic`, `w`.`Name`, `w`.`OwnerFullName`, `w`.`SynergyWithId`
 FROM `Weapons` AS `w`
 LEFT JOIN `Weapons` AS `w0` ON `w`.`SynergyWithId` = `w0`.`Id`
-WHERE `w0`.`Id` IS NOT NULL AND (`w0`.`AmmunitionType` IS NULL OR (`w0`.`AmmunitionType` = 1))
+WHERE `w0`.`Id` IS NOT NULL AND EXISTS (
+    SELECT 1
+    FROM JSON_TABLE('[null,1]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` int PATH '$[0]'
+    )) AS `t`
+    WHERE (`t`.`value` = `w0`.`AmmunitionType`) OR (`t`.`value` IS NULL AND (`w0`.`AmmunitionType` IS NULL)))
 """);
     }
 
@@ -11883,7 +11955,13 @@ FROM (
     SELECT `o`.`Nickname`, `o`.`SquadId`, `o`.`AssignedCityName`, `o`.`CityOfBirthName`, `o`.`FullName`, `o`.`HasSoulPatch`, `o`.`LeaderNickname`, `o`.`LeaderSquadId`, `o`.`Rank`, 'Officer' AS `Discriminator`
     FROM `Officers` AS `o`
 ) AS `t`
-WHERE (`t`.`HasSoulPatch` = TRUE) AND `t`.`HasSoulPatch` IN (FALSE, TRUE)
+WHERE (`t`.`HasSoulPatch` = TRUE) AND `t`.`HasSoulPatch` IN (
+    SELECT `v`.`value`
+    FROM JSON_TABLE('[false,true]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` tinyint(1) PATH '$[0]'
+    )) AS `v`
+)
 """);
     }
 
@@ -11901,7 +11979,13 @@ FROM (
     SELECT `o`.`Nickname`, `o`.`SquadId`, `o`.`AssignedCityName`, `o`.`CityOfBirthName`, `o`.`FullName`, `o`.`HasSoulPatch`, `o`.`LeaderNickname`, `o`.`LeaderSquadId`, `o`.`Rank`, 'Officer' AS `Discriminator`
     FROM `Officers` AS `o`
 ) AS `t`
-WHERE (`t`.`HasSoulPatch` = TRUE) AND `t`.`HasSoulPatch` IN (FALSE, TRUE)
+WHERE (`t`.`HasSoulPatch` = TRUE) AND `t`.`HasSoulPatch` IN (
+    SELECT `v`.`value`
+    FROM JSON_TABLE('[false,true]', '$[*]' COLUMNS (
+        `key` FOR ORDINALITY,
+        `value` tinyint(1) PATH '$[0]'
+    )) AS `v`
+)
 """);
     }
 
