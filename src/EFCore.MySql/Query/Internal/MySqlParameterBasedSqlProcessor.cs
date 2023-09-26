@@ -15,7 +15,6 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.Internal
     public class MySqlParameterBasedSqlProcessor : RelationalParameterBasedSqlProcessor
     {
         private readonly IMySqlOptions _options;
-        private readonly MySqlSqlExpressionFactory _sqlExpressionFactory;
 
         public MySqlParameterBasedSqlProcessor(
             RelationalParameterBasedSqlProcessorDependencies dependencies,
@@ -23,7 +22,6 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.Internal
             IMySqlOptions options)
             : base(dependencies, useRelationalNulls)
         {
-            _sqlExpressionFactory = (MySqlSqlExpressionFactory)Dependencies.SqlExpressionFactory;
             _options = options;
         }
 
@@ -48,7 +46,13 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.Internal
                     .Visit(queryExpression);
             }
 
-            queryExpression = new MySqlHavingExpressionVisitor(_sqlExpressionFactory).Visit(queryExpression);
+            queryExpression = new MySqlHavingExpressionVisitor((MySqlSqlExpressionFactory)Dependencies.SqlExpressionFactory).Visit(queryExpression);
+
+            queryExpression = new MySqlParameterInliningExpressionVisitor(
+                Dependencies.TypeMappingSource,
+                Dependencies.SqlExpressionFactory,
+                _options,
+                parametersValues).Visit(queryExpression);
 
             // Run the compatibility checks as late in the query pipeline (before the actual SQL translation happens) as reasonable.
             queryExpression = new MySqlCompatibilityExpressionVisitor(_options).Visit(queryExpression);
