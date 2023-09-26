@@ -51,8 +51,9 @@ namespace Pomelo.EntityFrameworkCore.MySql.Query.Internal
             queryExpression = new MySqlParameterInliningExpressionVisitor(
                 Dependencies.TypeMappingSource,
                 Dependencies.SqlExpressionFactory,
-                _options,
-                parametersValues).Visit(queryExpression);
+                _options).Process(queryExpression, parametersValues, out var canCache3);
+
+            canCache &= canCache3;
 
             // Run the compatibility checks as late in the query pipeline (before the actual SQL translation happens) as reasonable.
             queryExpression = new MySqlCompatibilityExpressionVisitor(_options).Visit(queryExpression);
