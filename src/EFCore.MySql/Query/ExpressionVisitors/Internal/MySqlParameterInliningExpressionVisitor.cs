@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Utilities;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Query.Expressions.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Query.ExpressionTranslators.Internal;
@@ -19,21 +20,35 @@ public class MySqlParameterInliningExpressionVisitor : ExpressionVisitor
 {
     private readonly IRelationalTypeMappingSource _typeMappingSource;
     private readonly ISqlExpressionFactory _sqlExpressionFactory;
-    private readonly IReadOnlyDictionary<string, object> _parametersValues;
     private readonly IMySqlOptions _options;
+
+    private IReadOnlyDictionary<string, object> _parametersValues;
+    private bool _canCache;
 
     private bool _inJsonTableSourceParameterCall;
 
     public MySqlParameterInliningExpressionVisitor(
         IRelationalTypeMappingSource typeMappingSource,
         ISqlExpressionFactory sqlExpressionFactory,
-        IMySqlOptions options,
-        IReadOnlyDictionary<string, object> parametersValues)
+        IMySqlOptions options)
     {
         _typeMappingSource = typeMappingSource;
         _sqlExpressionFactory = sqlExpressionFactory;
-        _parametersValues = parametersValues;
         _options = options;
+    }
+
+    public virtual Expression Process(Expression expression, IReadOnlyDictionary<string, object> parametersValues, out bool canCache)
+    {
+        Check.NotNull(expression, nameof(expression));
+
+        _parametersValues = parametersValues;
+        _canCache = true;
+
+        var result = Visit(expression);
+
+        canCache = _canCache;
+
+        return result;
     }
 
     protected override Expression VisitExtension(Expression extensionExpression)
@@ -65,6 +80,8 @@ public class MySqlParameterInliningExpressionVisitor : ExpressionVisitor
         if (_inJsonTableSourceParameterCall &&
             !_options.ServerVersion.Supports.JsonTableImplementationUsingParameterAsSourceWithoutEngineCrash)
         {
+            _canCache = false;
+
             return new MySqlInlinedParameterExpression(
                 sqlParameterExpression,
                 _sqlExpressionFactory.Constant(
