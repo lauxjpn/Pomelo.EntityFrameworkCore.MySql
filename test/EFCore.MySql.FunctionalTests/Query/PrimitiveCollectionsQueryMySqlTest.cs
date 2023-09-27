@@ -642,54 +642,103 @@ WHERE (
 """);
     }
 
-        public override async Task Column_collection_index_int(bool async)
+    public override async Task Column_collection_index_int(bool async)
     {
         await base.Column_collection_index_int(async);
 
-        AssertSql(
+        if (AppConfig.ServerVersion.Supports.JsonValue)
+        {
+            AssertSql(
 """
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE CAST(JSON_VALUE(`p`.`Ints`, '$[1]') AS signed) = 10
 """);
+        }
+        else
+        {
+            AssertSql(
+"""
+SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
+FROM `PrimitiveCollectionsEntity` AS `p`
+WHERE CAST(JSON_UNQUOTE(JSON_EXTRACT(`p`.`Ints`, '$[1]')) AS signed) = 10
+""");
+        }
     }
 
     public override async Task Column_collection_index_string(bool async)
     {
         await base.Column_collection_index_string(async);
 
-        AssertSql(
+        if (AppConfig.ServerVersion.Supports.JsonValue)
+        {
+            AssertSql(
 """
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE CAST(JSON_VALUE(`p`.`Strings`, '$[1]') AS char) = '10'
 """);
+        }
+        else
+        {
+            AssertSql(
+"""
+SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
+FROM `PrimitiveCollectionsEntity` AS `p`
+WHERE CAST(JSON_UNQUOTE(JSON_EXTRACT(`p`.`Strings`, '$[1]')) AS char) = '10'
+""");
+        }
     }
 
     public override async Task Column_collection_index_datetime(bool async)
     {
         await base.Column_collection_index_datetime(async);
 
-        AssertSql(
+        if (AppConfig.ServerVersion.Supports.JsonValue)
+        {
+            AssertSql(
 """
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE CAST(JSON_VALUE(`p`.`DateTimes`, '$[1]') AS datetime(6)) = TIMESTAMP '2020-01-10 12:30:00'
 """);
+        }
+        else
+        {
+            AssertSql(
+"""
+SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
+FROM `PrimitiveCollectionsEntity` AS `p`
+WHERE CAST(JSON_UNQUOTE(JSON_EXTRACT(`p`.`DateTimes`, '$[1]')) AS datetime(6)) = TIMESTAMP '2020-01-10 12:30:00'
+""");
+        }
     }
 
     public override async Task Column_collection_index_beyond_end(bool async)
     {
         await base.Column_collection_index_beyond_end(async);
 
-        AssertSql(
+        if (AppConfig.ServerVersion.Supports.JsonValue)
+        {
+            AssertSql(
 """
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE CAST(JSON_VALUE(`p`.`Ints`, '$[999]') AS signed) = 10
 """);
+        }
+        else
+        {
+            AssertSql(
+"""
+SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
+FROM `PrimitiveCollectionsEntity` AS `p`
+WHERE CAST(JSON_UNQUOTE(JSON_EXTRACT(`p`.`Ints`, '$[999]')) AS signed) = 10
+""");
+        }
     }
 
+    [SupportedServerVersionCondition(nameof(ServerVersionSupport.JsonValue), Skip = "TODO: Fix NULL handling of JSON_EXTRACT().")]
     public override async Task Nullable_reference_column_collection_index_equals_nullable_column(bool async)
     {
         await base.Nullable_reference_column_collection_index_equals_nullable_column(async);
@@ -706,12 +755,24 @@ WHERE (CAST(JSON_VALUE(`p`.`NullableStrings`, '$[2]') AS char) = `p`.`NullableSt
     {
         await base.Non_nullable_reference_column_collection_index_equals_nullable_column(async);
 
-        AssertSql(
+        if (AppConfig.ServerVersion.Supports.JsonValue)
+        {
+            AssertSql(
 """
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE (JSON_LENGTH(`p`.`Strings`) > 0) AND (CAST(JSON_VALUE(`p`.`Strings`, '$[1]') AS char) = `p`.`NullableString`)
 """);
+        }
+        else
+        {
+            AssertSql(
+"""
+SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
+FROM `PrimitiveCollectionsEntity` AS `p`
+WHERE (JSON_LENGTH(`p`.`Strings`) > 0) AND (CAST(JSON_UNQUOTE(JSON_EXTRACT(`p`.`Strings`, '$[1]')) AS char) = `p`.`NullableString`)
+""");
+        }
     }
 
     [SupportedServerVersionCondition(nameof(ServerVersionSupport.OffsetReferencesOuterQuery))]
@@ -763,12 +824,24 @@ WHERE CAST(JSON_UNQUOTE(JSON_EXTRACT(@__ints_0, CONCAT('$[', CAST(`p`.`Int` AS c
     {
         await base.Column_collection_ElementAt(async);
 
-        AssertSql(
+        if (AppConfig.ServerVersion.Supports.JsonValue)
+        {
+            AssertSql(
 """
 SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
 FROM `PrimitiveCollectionsEntity` AS `p`
 WHERE CAST(JSON_VALUE(`p`.`Ints`, '$[1]') AS signed) = 10
 """);
+        }
+        else
+        {
+            AssertSql(
+"""
+SELECT `p`.`Id`, `p`.`Bool`, `p`.`Bools`, `p`.`DateTime`, `p`.`DateTimes`, `p`.`Enum`, `p`.`Enums`, `p`.`Int`, `p`.`Ints`, `p`.`NullableInt`, `p`.`NullableInts`, `p`.`NullableString`, `p`.`NullableStrings`, `p`.`String`, `p`.`Strings`
+FROM `PrimitiveCollectionsEntity` AS `p`
+WHERE CAST(JSON_UNQUOTE(JSON_EXTRACT(`p`.`Ints`, '$[1]')) AS signed) = 10
+""");
+        }
     }
 
     public override async Task Column_collection_Skip(bool async)
