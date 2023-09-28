@@ -365,9 +365,12 @@ ALTER SEQUENCE `foo` RESTART WITH -3;
         }
 
         [SupportedServerVersionCondition(nameof(ServerVersionSupport.Sequences))]
-        public override Task Alter_sequence_restart_with()
+        public override async Task Alter_sequence_restart_with()
         {
-            return base.Alter_sequence_restart_with();
+            await base.Alter_sequence_restart_with();
+
+            AssertSql(
+                @"ALTER SEQUENCE `foo` START WITH 3 RESTART;");
         }
 
         public override async Task Alter_table_add_comment_non_default_schema()
