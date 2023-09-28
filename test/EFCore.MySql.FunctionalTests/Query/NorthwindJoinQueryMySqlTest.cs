@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestUtilities;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Pomelo.EntityFrameworkCore.MySql.Tests;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -63,7 +65,16 @@ ORDER BY `c`.`CustomerID`, `t0`.`OrderID0`, `t0`.`OrderID`");
         // public override Task Join_local_collection_int_closure_is_cached_correctly(bool async)
         //     => Assert.ThrowsAsync<InvalidOperationException>(() => base.Join_local_collection_int_closure_is_cached_correctly(async));
         public override Task Join_local_collection_int_closure_is_cached_correctly(bool async)
-            => base.Join_local_collection_int_closure_is_cached_correctly(async);
+        {
+            if (AppConfig.ServerVersion.Type == ServerType.MySql)
+            {
+                return base.Join_local_collection_int_closure_is_cached_correctly(async);
+            }
+            else
+            {
+                return Assert.ThrowsAsync<InvalidOperationException>(() => base.Join_local_collection_int_closure_is_cached_correctly(async));
+            }
+        }
 
         private void AssertSql(params string[] expected)
             => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
