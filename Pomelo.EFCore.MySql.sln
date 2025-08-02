@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryBaselineUpdater", "too
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{DD543966-92C7-4FE6-B953-3270E3E11D46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomSchemaCreator", "RandomSchemaCreator\RandomSchemaCreator.csproj", "{2FBEED66-A765-4675-974F-D8C707DF02B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{57293669-2ADF-448F-AE22-B49BAC4A335E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57293669-2ADF-448F-AE22-B49BAC4A335E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57293669-2ADF-448F-AE22-B49BAC4A335E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FBEED66-A765-4675-974F-D8C707DF02B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FBEED66-A765-4675-974F-D8C707DF02B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FBEED66-A765-4675-974F-D8C707DF02B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FBEED66-A765-4675-974F-D8C707DF02B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +100,7 @@ Global
 		{C27A301A-F47E-4584-88DB-0474AE446405} = {7E8380DB-F015-407B-99C2-26404E551673}
 		{BBA0BB73-3D75-4F08-992F-A2CF9F52E7AD} = {7E8380DB-F015-407B-99C2-26404E551673}
 		{57293669-2ADF-448F-AE22-B49BAC4A335E} = {DD543966-92C7-4FE6-B953-3270E3E11D46}
+		{2FBEED66-A765-4675-974F-D8C707DF02B6} = {DD543966-92C7-4FE6-B953-3270E3E11D46}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {48E34212-4B35-4A81-92F9-3C25D4E76D6C}
