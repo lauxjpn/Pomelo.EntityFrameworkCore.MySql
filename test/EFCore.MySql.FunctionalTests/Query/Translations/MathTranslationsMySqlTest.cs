@@ -19,10 +19,10 @@ public class MathTranslationsMySqlTest : MathTranslationsTestBase<BasicTypesQuer
         await base.Abs_decimal();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE abs(b."Decimal") = 9.5
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ABS(`b`.`Decimal`) = 9.5
 """);
     }
 
@@ -31,10 +31,10 @@ WHERE abs(b."Decimal") = 9.5
         await base.Abs_int();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE abs(b."Int") = 9
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ABS(`b`.`Int`) = 9
 """);
     }
 
@@ -43,10 +43,10 @@ WHERE abs(b."Int") = 9
         await base.Abs_double();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE abs(b."Double") = 9.5
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ABS(`b`.`Double`) = 9.5
 """);
     }
 
@@ -55,10 +55,10 @@ WHERE abs(b."Double") = 9.5
         await base.Abs_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE abs(b."Float")::double precision = 9.5
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(ABS(`b`.`Float`) AS double) = 9.5
 """);
     }
 
@@ -67,10 +67,10 @@ WHERE abs(b."Float")::double precision = 9.5
         await base.Ceiling();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE ceiling(b."Double") = 9.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CEILING(`b`.`Double`) = 9.0
 """);
     }
 
@@ -79,10 +79,10 @@ WHERE ceiling(b."Double") = 9.0
         await base.Ceiling_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE ceiling(b."Float") = 9
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CEILING(`b`.`Float`) = 9
 """);
     }
 
@@ -91,10 +91,10 @@ WHERE ceiling(b."Float") = 9
         await base.Floor_decimal();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE floor(b."Decimal") = 8.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE FLOOR(`b`.`Decimal`) = 8.0
 """);
     }
 
@@ -103,10 +103,10 @@ WHERE floor(b."Decimal") = 8.0
         await base.Floor_double();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE floor(b."Double") = 8.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE FLOOR(`b`.`Double`) = 8.0
 """);
     }
 
@@ -115,10 +115,10 @@ WHERE floor(b."Double") = 8.0
         await base.Floor_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE floor(b."Float") = 8
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE FLOOR(`b`.`Float`) = 8
 """);
     }
 
@@ -127,10 +127,10 @@ WHERE floor(b."Float") = 8
         await base.Power();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE power(b."Int"::double precision, 2.0) = 64.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE POWER(CAST(`b`.`Int` AS double), 2.0) = 64.0
 """);
     }
 
@@ -139,10 +139,10 @@ WHERE power(b."Int"::double precision, 2.0) = 64.0
         await base.Power_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE power(b."Float", 2) > 73 AND power(b."Float", 2) < 74
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE (POWER(`b`.`Float`, 2) > 73) AND (POWER(`b`.`Float`, 2) < 74)
 """);
     }
 
@@ -151,15 +151,15 @@ WHERE power(b."Float", 2) > 73 AND power(b."Float", 2) < 74
         await base.Round_decimal();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE round(b."Decimal") = 9.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ROUND(`b`.`Decimal`) = 9.0
 """,
-            //
-            """
-SELECT round(b."Decimal")
-FROM "BasicTypesEntities" AS b
+                //
+                """
+SELECT ROUND(`b`.`Decimal`)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -168,15 +168,15 @@ FROM "BasicTypesEntities" AS b
         await base.Round_double();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE round(b."Double") = 9.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ROUND(`b`.`Double`) = 9.0
 """,
-            //
-            """
-SELECT round(b."Double")
-FROM "BasicTypesEntities" AS b
+                //
+                """
+SELECT ROUND(`b`.`Double`)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -185,15 +185,15 @@ FROM "BasicTypesEntities" AS b
         await base.Round_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE round(b."Float")::real = 9
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ROUND(`b`.`Float`) = 9
 """,
-            //
-            """
-SELECT round(b."Float")::real
-FROM "BasicTypesEntities" AS b
+                //
+                """
+SELECT ROUND(`b`.`Float`)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -202,10 +202,10 @@ FROM "BasicTypesEntities" AS b
         await base.Round_with_digits_decimal();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE round(b."Decimal", 1) = 255.1
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ROUND(`b`.`Decimal`, 1) = 255.1
 """);
     }
 
@@ -222,15 +222,15 @@ WHERE round(b."Decimal", 1) = 255.1
         await base.Truncate_decimal();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE trunc(b."Decimal") = 8.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE TRUNCATE(`b`.`Decimal`, 0) = 8.0
 """,
-            //
-            """
-SELECT trunc(b."Decimal")
-FROM "BasicTypesEntities" AS b
+                //
+                """
+SELECT TRUNCATE(`b`.`Decimal`, 0)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -239,15 +239,15 @@ FROM "BasicTypesEntities" AS b
         await base.Truncate_double();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE trunc(b."Double") = 8.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE TRUNCATE(`b`.`Double`, 0) = 8.0
 """,
-            //
-            """
-SELECT trunc(b."Double")
-FROM "BasicTypesEntities" AS b
+                //
+                """
+SELECT TRUNCATE(`b`.`Double`, 0)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -256,15 +256,15 @@ FROM "BasicTypesEntities" AS b
         await base.Truncate_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE trunc(b."Float")::real = 8
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE TRUNCATE(`b`.`Float`, 0) = 8
 """,
-            //
-            """
-SELECT trunc(b."Float")::real
-FROM "BasicTypesEntities" AS b
+                //
+                """
+SELECT TRUNCATE(`b`.`Float`, 0)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -273,10 +273,10 @@ FROM "BasicTypesEntities" AS b
         await base.Truncate_project_and_order_by_it_twice();
 
         AssertSql(
-            """
-SELECT trunc(b."Double") AS "A"
-FROM "BasicTypesEntities" AS b
-ORDER BY trunc(b."Double") NULLS FIRST
+"""
+SELECT TRUNCATE(`b`.`Double`, 0) AS `A`
+FROM `BasicTypesEntities` AS `b`
+ORDER BY TRUNCATE(`b`.`Double`, 0)
 """);
     }
 
@@ -291,10 +291,10 @@ ORDER BY trunc(b."Double") NULLS FIRST
         await base.Truncate_project_and_order_by_it_twice2();
 
         AssertSql(
-            """
-SELECT trunc(b."Double") AS "A"
-FROM "BasicTypesEntities" AS b
-ORDER BY trunc(b."Double") DESC NULLS LAST
+"""
+SELECT TRUNCATE(`b`.`Double`, 0) AS `A`
+FROM `BasicTypesEntities` AS `b`
+ORDER BY TRUNCATE(`b`.`Double`, 0) DESC
 """);
     }
 
@@ -309,10 +309,10 @@ ORDER BY trunc(b."Double") DESC NULLS LAST
         await base.Truncate_project_and_order_by_it_twice3();
 
         AssertSql(
-            """
-SELECT trunc(b."Double") AS "A"
-FROM "BasicTypesEntities" AS b
-ORDER BY trunc(b."Double") DESC NULLS LAST
+"""
+SELECT TRUNCATE(`b`.`Double`, 0) AS `A`
+FROM `BasicTypesEntities` AS `b`
+ORDER BY TRUNCATE(`b`.`Double`, 0) DESC
 """);
     }
 
@@ -321,10 +321,10 @@ ORDER BY trunc(b."Double") DESC NULLS LAST
         await base.Exp();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE exp(b."Double") > 1.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE EXP(`b`.`Double`) > 1.0
 """);
     }
 
@@ -333,10 +333,10 @@ WHERE exp(b."Double") > 1.0
         await base.Exp_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE exp(b."Float") > 1
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE EXP(`b`.`Float`) > 1
 """);
     }
 
@@ -345,10 +345,10 @@ WHERE exp(b."Float") > 1
         await base.Log();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Double" > 0.0 AND ln(b."Double") <> 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE (`b`.`Double` > 0.0) AND (LOG(`b`.`Double`) <> 0.0)
 """);
     }
 
@@ -357,10 +357,10 @@ WHERE b."Double" > 0.0 AND ln(b."Double") <> 0.0
         await base.Log_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Float" > 0 AND ln(b."Float") <> 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE (`b`.`Float` > 0) AND (LOG(`b`.`Float`) <> 0)
 """);
     }
 
@@ -377,10 +377,10 @@ WHERE b."Float" > 0 AND ln(b."Float") <> 0
         await base.Log10();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Double" > 0.0 AND log(b."Double") <> 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE (`b`.`Double` > 0.0) AND ((LOG10(`b`.`Double`) <> 0.0) OR LOG10(`b`.`Double`) IS NULL)
 """);
     }
 
@@ -389,10 +389,10 @@ WHERE b."Double" > 0.0 AND log(b."Double") <> 0.0
         await base.Log10_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Float" > 0 AND log(b."Float") <> 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE (`b`.`Float` > 0) AND ((LOG10(`b`.`Float`) <> 0) OR LOG10(`b`.`Float`) IS NULL)
 """);
     }
 
@@ -404,10 +404,10 @@ WHERE b."Float" > 0 AND log(b."Float") <> 0
         await base.Sqrt();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Double" > 0.0 AND sqrt(b."Double") > 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE (`b`.`Double` > 0.0) AND (SQRT(`b`.`Double`) > 0.0)
 """);
     }
 
@@ -416,10 +416,10 @@ WHERE b."Double" > 0.0 AND sqrt(b."Double") > 0.0
         await base.Sqrt_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Float" > 0 AND sqrt(b."Float") > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE (`b`.`Float` > 0) AND (SQRT(`b`.`Float`) > 0)
 """);
     }
 
@@ -428,10 +428,10 @@ WHERE b."Float" > 0 AND sqrt(b."Float") > 0
         await base.Sign();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE sign(b."Double")::int > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE SIGN(`b`.`Double`) > 0
 """);
     }
 
@@ -440,10 +440,10 @@ WHERE sign(b."Double")::int > 0
         await base.Sign_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE sign(b."Float")::int > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE SIGN(`b`.`Float`) > 0
 """);
     }
 
@@ -452,10 +452,10 @@ WHERE sign(b."Float")::int > 0
         await base.Max();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE GREATEST(b."Int", b."Short" - 3) = b."Int"
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE GREATEST(`b`.`Int`, `b`.`Short` - 3) = `b`.`Int`
 """);
     }
 
@@ -464,10 +464,10 @@ WHERE GREATEST(b."Int", b."Short" - 3) = b."Int"
         await base.Max_nested();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE GREATEST(b."Short" - 3, b."Int", 1) = b."Int"
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE GREATEST(`b`.`Short` - 3, `b`.`Int`, 1) = `b`.`Int`
 """);
     }
 
@@ -476,10 +476,10 @@ WHERE GREATEST(b."Short" - 3, b."Int", 1) = b."Int"
         await base.Max_nested_twice();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE GREATEST(1, b."Int", 2, b."Short" - 3) = b."Int"
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE GREATEST(1, `b`.`Int`, 2, `b`.`Short` - 3) = `b`.`Int`
 """);
     }
 
@@ -488,10 +488,10 @@ WHERE GREATEST(1, b."Int", 2, b."Short" - 3) = b."Int"
         await base.Min();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE LEAST(b."Int", b."Short" + 3) = b."Int"
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE LEAST(`b`.`Int`, `b`.`Short` + 3) = `b`.`Int`
 """);
     }
 
@@ -500,10 +500,10 @@ WHERE LEAST(b."Int", b."Short" + 3) = b."Int"
         await base.Min_nested();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE LEAST(b."Short" + 3, b."Int", 99999) = b."Int"
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE LEAST(`b`.`Short` + 3, `b`.`Int`, 99999) = `b`.`Int`
 """);
     }
 
@@ -512,10 +512,10 @@ WHERE LEAST(b."Short" + 3, b."Int", 99999) = b."Int"
         await base.Min_nested_twice();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE LEAST(99999, b."Int", 99998, b."Short" + 3) = b."Int"
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE LEAST(99999, `b`.`Int`, 99998, `b`.`Short` + 3) = `b`.`Int`
 """);
     }
 
@@ -524,10 +524,10 @@ WHERE LEAST(99999, b."Int", 99998, b."Short" + 3) = b."Int"
         await base.Degrees();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE degrees(b."Double") > 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE DEGREES(`b`.`Double`) > 0.0
 """);
     }
 
@@ -536,10 +536,10 @@ WHERE degrees(b."Double") > 0.0
         await base.Degrees_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE degrees(b."Float") > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE DEGREES(`b`.`Float`) > 0
 """);
     }
 
@@ -548,10 +548,10 @@ WHERE degrees(b."Float") > 0
         await base.Radians();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE radians(b."Double") > 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE RADIANS(`b`.`Double`) > 0.0
 """);
     }
 
@@ -560,10 +560,10 @@ WHERE radians(b."Double") > 0.0
         await base.Radians_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE radians(b."Float") > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE RADIANS(`b`.`Float`) > 0
 """);
     }
 
@@ -574,10 +574,10 @@ WHERE radians(b."Float") > 0
         await base.Acos();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Double" >= -1.0 AND b."Double" <= 1.0 AND acos(b."Double") > 1.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ((`b`.`Double` >= -1.0) AND (`b`.`Double` <= 1.0)) AND (ACOS(`b`.`Double`) > 1.0)
 """);
     }
 
@@ -586,10 +586,10 @@ WHERE b."Double" >= -1.0 AND b."Double" <= 1.0 AND acos(b."Double") > 1.0
         await base.Acos_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Float" >= -1 AND b."Float" <= 1 AND acos(b."Float") > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ((`b`.`Float` >= -1) AND (`b`.`Float` <= 1)) AND (ACOS(`b`.`Float`) > 0)
 """);
     }
 
@@ -601,10 +601,10 @@ WHERE b."Float" >= -1 AND b."Float" <= 1 AND acos(b."Float") > 0
         await base.Asin();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Double" >= -1.0 AND b."Double" <= 1.0 AND asin(b."Double") > -1.7976931348623157E+308
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ((`b`.`Double` >= -1.0) AND (`b`.`Double` <= 1.0)) AND (ASIN(`b`.`Double`) > -1.7976931348623157E+308)
 """);
     }
 
@@ -613,10 +613,10 @@ WHERE b."Double" >= -1.0 AND b."Double" <= 1.0 AND asin(b."Double") > -1.7976931
         await base.Asin_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Float" >= -1 AND b."Float" <= 1 AND asin(b."Float")::double precision > -1.7976931348623157E+308
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ((`b`.`Float` >= -1) AND (`b`.`Float` <= 1)) AND (CAST(ASIN(`b`.`Float`) AS double) > -1.7976931348623157E+308)
 """);
     }
 
@@ -628,10 +628,10 @@ WHERE b."Float" >= -1 AND b."Float" <= 1 AND asin(b."Float")::double precision >
         await base.Atan();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE atan(b."Double") > 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ATAN(`b`.`Double`) > 0.0
 """);
     }
 
@@ -640,10 +640,10 @@ WHERE atan(b."Double") > 0.0
         await base.Atan_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE atan(b."Float") > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ATAN(`b`.`Float`) > 0
 """);
     }
 
@@ -655,10 +655,10 @@ WHERE atan(b."Float") > 0
         await base.Atan2();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE atan2(b."Double", 1.0) > 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ATAN2(`b`.`Double`, 1.0) > 0.0
 """);
     }
 
@@ -667,10 +667,10 @@ WHERE atan2(b."Double", 1.0) > 0.0
         await base.Atan2_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE atan2(b."Float", 1) > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE ATAN2(`b`.`Float`, 1) > 0
 """);
     }
 
@@ -679,10 +679,10 @@ WHERE atan2(b."Float", 1) > 0
         await base.Cos();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE cos(b."Double") > 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE COS(`b`.`Double`) > 0.0
 """);
     }
 
@@ -691,10 +691,10 @@ WHERE cos(b."Double") > 0.0
         await base.Cos_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE cos(b."Float") > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE COS(`b`.`Float`) > 0
 """);
     }
 
@@ -706,10 +706,10 @@ WHERE cos(b."Float") > 0
         await base.Sin();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE sin(b."Double") > 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE SIN(`b`.`Double`) > 0.0
 """);
     }
 
@@ -718,10 +718,10 @@ WHERE sin(b."Double") > 0.0
         await base.Sin_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE sin(b."Float") > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE SIN(`b`.`Float`) > 0
 """);
     }
 
@@ -733,10 +733,10 @@ WHERE sin(b."Float") > 0
         await base.Tan();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE tan(b."Double") > 0.0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE TAN(`b`.`Double`) > 0.0
 """);
     }
 
@@ -745,10 +745,10 @@ WHERE tan(b."Double") > 0.0
         await base.Tan_float();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE tan(b."Float") > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE TAN(`b`.`Float`) > 0
 """);
     }
 

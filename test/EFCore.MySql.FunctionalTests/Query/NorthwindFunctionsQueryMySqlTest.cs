@@ -55,11 +55,13 @@ ORDER BY CHAR_LENGTH(`c`.`CustomerID`), `c`.`CustomerID`");
             await base.Static_equals_nullable_datetime_compared_to_non_nullable(async);
 
             AssertSql(
-                @"@__arg_0='1996-07-04T00:00:00.0000000' (DbType = DateTime)
+"""
+@arg='1996-07-04T00:00:00.0000000' (DbType = DateTime)
 
 SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`
 FROM `Orders` AS `o`
-WHERE `o`.`OrderDate` = @__arg_0");
+WHERE `o`.`OrderDate` = @arg
+""");
         }
 
         public override async Task Static_equals_int_compared_to_long(bool async)

@@ -22,10 +22,10 @@ public class EnumTranslationsMySqlTest : EnumTranslationsTestBase<BasicTypesQuer
         await base.Equality_to_constant();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Enum" = 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE `b`.`Enum` = 0
 """);
     }
 
@@ -34,12 +34,12 @@ WHERE b."Enum" = 0
         await base.Equality_to_parameter();
 
         AssertSql(
-            """
+"""
 @basicEnum='0'
 
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."Enum" = @basicEnum
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE `b`.`Enum` = @basicEnum
 """);
     }
 
@@ -48,10 +48,10 @@ WHERE b."Enum" = @basicEnum
         await base.Equality_nullable_enum_to_constant();
 
         AssertSql(
-            """
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."Enum" = 0
+"""
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE `n`.`Enum` = 0
 """);
     }
 
@@ -60,12 +60,12 @@ WHERE n."Enum" = 0
         await base.Equality_nullable_enum_to_parameter();
 
         AssertSql(
-            """
+"""
 @basicEnum='0'
 
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."Enum" = @basicEnum
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE `n`.`Enum` = @basicEnum
 """);
     }
 
@@ -74,10 +74,10 @@ WHERE n."Enum" = @basicEnum
         await base.Equality_nullable_enum_to_null_constant();
 
         AssertSql(
-            """
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."Enum" IS NULL
+"""
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE `n`.`Enum` IS NULL
 """);
     }
 
@@ -86,10 +86,10 @@ WHERE n."Enum" IS NULL
         await base.Equality_nullable_enum_to_null_parameter();
 
         AssertSql(
-            """
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."Enum" IS NULL
+"""
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE `n`.`Enum` IS NULL
 """);
     }
 
@@ -98,12 +98,12 @@ WHERE n."Enum" IS NULL
         await base.Equality_nullable_enum_to_nullable_parameter();
 
         AssertSql(
-            """
+"""
 @basicEnum='0' (Nullable = true)
 
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."Enum" = @basicEnum
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE `n`.`Enum` = @basicEnum
 """);
     }
 
@@ -114,16 +114,16 @@ WHERE n."Enum" = @basicEnum
         await base.Bitwise_and_enum_constant();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & 1 > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & 1 AS signed) > 0
 """,
-            //
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & 1 = 1
+                //
+                """
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & 1 AS signed) = 1
 """);
     }
 
@@ -132,22 +132,22 @@ WHERE b."FlagsEnum" & 1 = 1
         await base.Bitwise_and_integral_constant();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & 8 = 8
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & 8 AS signed) = 8
 """,
-            //
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum"::bigint & 8 = 8
+                //
+                """
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(CAST(`b`.`FlagsEnum` AS signed) & 8 AS signed) = 8
 """,
-            //
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum"::smallint & 8 = 8
+                //
+                """
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(CAST(`b`.`FlagsEnum` AS signed) & 8 AS signed) = 8
 """);
     }
 
@@ -156,10 +156,10 @@ WHERE b."FlagsEnum"::smallint & 8 = 8
         await base.Bitwise_and_nullable_enum_with_constant();
 
         AssertSql(
-            """
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."FlagsEnum" & 8 > 0
+"""
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE CAST(`n`.`FlagsEnum` & 8 AS signed) > 0
 """);
     }
 
@@ -168,10 +168,10 @@ WHERE n."FlagsEnum" & 8 > 0
         await base.Where_bitwise_and_nullable_enum_with_null_constant();
 
         AssertSql(
-            """
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."FlagsEnum" & NULL > 0
+"""
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE CAST(`n`.`FlagsEnum` & NULL AS signed) > 0
 """);
     }
 
@@ -180,12 +180,12 @@ WHERE n."FlagsEnum" & NULL > 0
         await base.Where_bitwise_and_nullable_enum_with_non_nullable_parameter();
 
         AssertSql(
-            """
+"""
 @flagsEnum='8'
 
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."FlagsEnum" & @flagsEnum > 0
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE CAST(`n`.`FlagsEnum` & @flagsEnum AS signed) > 0
 """);
     }
 
@@ -194,18 +194,18 @@ WHERE n."FlagsEnum" & @flagsEnum > 0
         await base.Where_bitwise_and_nullable_enum_with_nullable_parameter();
 
         AssertSql(
-            """
+"""
 @flagsEnum='8' (Nullable = true)
 
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."FlagsEnum" & @flagsEnum > 0
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE CAST(`n`.`FlagsEnum` & @flagsEnum AS signed) > 0
 """,
-            //
-            """
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE n."FlagsEnum" & NULL > 0
+                //
+                """
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE CAST(`n`.`FlagsEnum` & NULL AS signed) > 0
 """);
     }
 
@@ -214,10 +214,10 @@ WHERE n."FlagsEnum" & NULL > 0
         await base.Bitwise_or();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" | 8 > 0
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` | 8 AS signed) > 0
 """);
     }
 
@@ -226,10 +226,10 @@ WHERE b."FlagsEnum" | 8 > 0
         await base.Bitwise_projects_values_in_select();
 
         AssertSql(
-            """
-SELECT b."FlagsEnum" & 8 = 8 AS "BitwiseTrue", b."FlagsEnum" & 8 = 4 AS "BitwiseFalse", b."FlagsEnum" & 8 AS "BitwiseValue"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & 8 = 8
+"""
+SELECT CAST(`b`.`FlagsEnum` & 8 AS signed) = 8 AS `BitwiseTrue`, CAST(`b`.`FlagsEnum` & 8 AS signed) = 4 AS `BitwiseFalse`, CAST(`b`.`FlagsEnum` & 8 AS signed) AS `BitwiseValue`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & 8 AS signed) = 8
 LIMIT 1
 """);
     }
@@ -239,40 +239,40 @@ LIMIT 1
         await base.HasFlag();
 
 AssertSql(
-    """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & 8 = 8
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & 8 AS signed) = 8
 """,
-    //
-    """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & 12 = 12
+                //
+                """
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & 12 AS signed) = 12
 """,
-    //
-    """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & 8 = 8
+                //
+                """
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & 8 AS signed) = 8
 """,
-    //
-    """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & 8 = 8
+                //
+                """
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & 8 AS signed) = 8
 """,
-    //
-    """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE 8 & b."FlagsEnum" = b."FlagsEnum"
+                //
+                """
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(8 & `b`.`FlagsEnum` AS signed) = `b`.`FlagsEnum`
 """,
-    //
-    """
-SELECT b."FlagsEnum" & 8 = 8 AS "hasFlagTrue", b."FlagsEnum" & 4 = 4 AS "hasFlagFalse"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & 8 = 8
+                //
+                """
+SELECT CAST(`b`.`FlagsEnum` & 8 AS signed) = 8 AS `hasFlagTrue`, CAST(`b`.`FlagsEnum` & 4 AS signed) = 4 AS `hasFlagFalse`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & 8 AS signed) = 8
 LIMIT 1
 """);
     }
@@ -282,12 +282,12 @@ LIMIT 1
         await base.HasFlag_with_non_nullable_parameter();
 
         AssertSql(
-            """
+"""
 @flagsEnum='8'
 
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & @flagsEnum = @flagsEnum
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & @flagsEnum AS signed) = @flagsEnum
 """);
     }
 
@@ -296,12 +296,12 @@ WHERE b."FlagsEnum" & @flagsEnum = @flagsEnum
         await base.HasFlag_with_nullable_parameter();
 
         AssertSql(
-            """
+"""
 @flagsEnum='8' (Nullable = true)
 
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."FlagsEnum" & @flagsEnum = @flagsEnum
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE CAST(`b`.`FlagsEnum` & @flagsEnum AS signed) = @flagsEnum
 """);
     }
 

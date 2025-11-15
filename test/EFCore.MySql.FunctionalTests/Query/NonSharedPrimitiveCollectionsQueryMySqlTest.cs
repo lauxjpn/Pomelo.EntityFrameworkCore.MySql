@@ -491,10 +491,29 @@ LIMIT 2
         switch (mode)
         {
             case ParameterTranslationMode.MultipleParameters:
-                AssertSql("");
+                AssertSql(
+"""
+@ids1='2'
+@ids2='999'
+
+SELECT `t`.`Id`
+FROM `TestEntity` AS `t`
+WHERE (
+    SELECT COUNT(*)
+    FROM (SELECT @ids1 AS `Value` UNION ALL VALUES ROW(@ids2)) AS `i`
+    WHERE `i`.`Value` > `t`.`Id`) = 1
+""");
                 break;
             case ParameterTranslationMode.Constant:
-                AssertSql("");
+                AssertSql(
+"""
+SELECT `t`.`Id`
+FROM `TestEntity` AS `t`
+WHERE (
+    SELECT COUNT(*)
+    FROM (SELECT CAST(2 AS signed) AS `Value` UNION ALL VALUES ROW(999)) AS `i`
+    WHERE `i`.`Value` > `t`.`Id`) = 1
+""");
                 break;
             case ParameterTranslationMode.Parameter:
                 AssertSql("");

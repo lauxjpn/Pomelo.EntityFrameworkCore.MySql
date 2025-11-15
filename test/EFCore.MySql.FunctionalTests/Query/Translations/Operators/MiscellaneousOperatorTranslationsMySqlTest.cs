@@ -19,11 +19,11 @@ public class MiscellaneousOperatorTranslationsMySqlTest : MiscellaneousOperatorT
         await base.Conditional();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
 WHERE CASE
-    WHEN b."Int" = 8 THEN b."String"
+    WHEN `b`.`Int` = 8 THEN `b`.`String`
     ELSE 'Foo'
 END = 'Seattle'
 """);
@@ -34,10 +34,10 @@ END = 'Seattle'
         await base.Coalesce();
 
         AssertSql(
-            """
-SELECT n."Id", n."Bool", n."Byte", n."ByteArray", n."DateOnly", n."DateTime", n."DateTimeOffset", n."Decimal", n."Double", n."Enum", n."FlagsEnum", n."Float", n."Guid", n."Int", n."Long", n."Short", n."String", n."TimeOnly", n."TimeSpan"
-FROM "NullableBasicTypesEntities" AS n
-WHERE COALESCE(n."String", 'Unknown') = 'Seattle'
+"""
+SELECT `n`.`Id`, `n`.`Bool`, `n`.`Byte`, `n`.`ByteArray`, `n`.`DateOnly`, `n`.`DateTime`, `n`.`DateTimeOffset`, `n`.`Decimal`, `n`.`Double`, `n`.`Enum`, `n`.`FlagsEnum`, `n`.`Float`, `n`.`Guid`, `n`.`Int`, `n`.`Long`, `n`.`Short`, `n`.`String`, `n`.`TimeOnly`, `n`.`TimeSpan`
+FROM `NullableBasicTypesEntities` AS `n`
+WHERE COALESCE(`n`.`String`, 'Unknown') = 'Seattle'
 """);
     }
 

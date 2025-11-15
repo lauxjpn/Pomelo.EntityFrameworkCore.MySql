@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.TestUtilities;
@@ -35,7 +35,7 @@ public class MathQueryMySqlTest : IClassFixture<MathQueryMySqlTest.MathQueryMySq
         AssertSql(
 """
 SELECT 2
-FROM "Dummy" AS d
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -54,7 +54,7 @@ LIMIT 2
         AssertSql(
 """
 SELECT 2.5
-FROM "Dummy" AS d
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -73,7 +73,7 @@ LIMIT 2
         AssertSql(
 """
 SELECT 2.0
-FROM "Dummy" AS d
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -92,7 +92,7 @@ LIMIT 2
         AssertSql(
 """
 SELECT 5 / 2
-FROM "Dummy" AS d
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -110,8 +110,8 @@ LIMIT 2
 
         AssertSql(
 """
-SELECT 5.0 / 2::numeric
-FROM "Dummy" AS d
+SELECT 5.0 / CAST(2 AS decimal(65,30))
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -148,8 +148,8 @@ LIMIT 2
 
         AssertSql(
 """
-SELECT d."IntLeftOperand" / d."IntRightOperand"
-FROM "Dummy" AS d
+SELECT `d`.`IntLeftOperand` / `d`.`IntRightOperand`
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -167,8 +167,8 @@ LIMIT 2
 
         AssertSql(
 """
-SELECT d."IntLeftOperand"::numeric / d."IntRightOperand"::numeric
-FROM "Dummy" AS d
+SELECT CAST(`d`.`IntLeftOperand` AS decimal(65,30)) / CAST(`d`.`IntRightOperand` AS decimal(65,30))
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -207,7 +207,7 @@ LIMIT 2
         AssertSql(
 """
 SELECT 4
-FROM "Dummy" AS d
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -247,7 +247,7 @@ LIMIT 2
         AssertSql(
 """
 SELECT 5.0
-FROM "Dummy" AS d
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -266,8 +266,8 @@ LIMIT 2
 
         AssertSql(
 """
-SELECT (5::numeric / 2::numeric) * 2::numeric
-FROM "Dummy" AS d
+SELECT (CAST(5 AS decimal(65,30)) / CAST(2 AS decimal(65,30))) * CAST(2 AS decimal(65,30))
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -287,7 +287,7 @@ LIMIT 2
         AssertSql(
 """
 SELECT 4.0
-FROM "Dummy" AS d
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }
@@ -346,8 +346,8 @@ LIMIT 2
 
         AssertSql(
 """
-SELECT (d."IntLeftOperand"::numeric / d."IntRightOperand"::numeric) * d."IntRightOperand"::numeric
-FROM "Dummy" AS d
+SELECT (CAST(`d`.`IntLeftOperand` AS decimal(65,30)) / CAST(`d`.`IntRightOperand` AS decimal(65,30))) * CAST(`d`.`IntRightOperand` AS decimal(65,30))
+FROM `Dummy` AS `d`
 LIMIT 2
 """);
     }

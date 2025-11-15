@@ -25,10 +25,10 @@ public class DateTimeOffsetTranslationsMySqlTest : DateTimeOffsetTranslationsTes
         await base.UtcNow();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE b."DateTimeOffset" <> now()
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE `b`.`DateTimeOffset` <> UTC_TIMESTAMP(6)
 """);
     }
 
@@ -42,10 +42,10 @@ WHERE b."DateTimeOffset" <> now()
         await base.Year();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE date_part('year', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 1998
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE EXTRACT(year FROM `b`.`DateTimeOffset`) = 1998
 """);
     }
 
@@ -54,10 +54,10 @@ WHERE date_part('year', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 1998
         await base.Month();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE date_part('month', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 5
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE EXTRACT(month FROM `b`.`DateTimeOffset`) = 5
 """);
     }
 
@@ -66,10 +66,10 @@ WHERE date_part('month', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 5
         await base.DayOfYear();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE date_part('doy', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 124
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE DAYOFYEAR(`b`.`DateTimeOffset`) = 124
 """);
     }
 
@@ -78,10 +78,10 @@ WHERE date_part('doy', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 124
         await base.Day();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE date_part('day', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 4
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE EXTRACT(day FROM `b`.`DateTimeOffset`) = 4
 """);
     }
 
@@ -90,10 +90,10 @@ WHERE date_part('day', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 4
         await base.Hour();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE date_part('hour', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 15
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE EXTRACT(hour FROM `b`.`DateTimeOffset`) = 15
 """);
     }
 
@@ -102,10 +102,10 @@ WHERE date_part('hour', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 15
         await base.Minute();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE date_part('minute', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 30
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE EXTRACT(minute FROM `b`.`DateTimeOffset`) = 30
 """);
     }
 
@@ -114,10 +114,10 @@ WHERE date_part('minute', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 30
         await base.Second();
 
         AssertSql(
-            """
-SELECT b."Id", b."Bool", b."Byte", b."ByteArray", b."DateOnly", b."DateTime", b."DateTimeOffset", b."Decimal", b."Double", b."Enum", b."FlagsEnum", b."Float", b."Guid", b."Int", b."Long", b."Short", b."String", b."TimeOnly", b."TimeSpan"
-FROM "BasicTypesEntities" AS b
-WHERE date_part('second', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 10
+"""
+SELECT `b`.`Id`, `b`.`Bool`, `b`.`Byte`, `b`.`ByteArray`, `b`.`DateOnly`, `b`.`DateTime`, `b`.`DateTimeOffset`, `b`.`Decimal`, `b`.`Double`, `b`.`Enum`, `b`.`FlagsEnum`, `b`.`Float`, `b`.`Guid`, `b`.`Int`, `b`.`Long`, `b`.`Short`, `b`.`String`, `b`.`TimeOnly`, `b`.`TimeSpan`
+FROM `BasicTypesEntities` AS `b`
+WHERE EXTRACT(second FROM `b`.`DateTimeOffset`) = 10
 """);
     }
 
@@ -138,9 +138,9 @@ WHERE date_part('second', b."DateTimeOffset" AT TIME ZONE 'UTC')::int = 10
         await base.TimeOfDay();
 
         AssertSql(
-            """
-SELECT CAST(b."DateTimeOffset" AT TIME ZONE 'UTC' AS time)
-FROM "BasicTypesEntities" AS b
+"""
+SELECT CAST(`b`.`DateTimeOffset` AS time(6))
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -149,9 +149,9 @@ FROM "BasicTypesEntities" AS b
         await base.AddYears();
 
         AssertSql(
-            """
-SELECT b."DateTimeOffset" + INTERVAL '1 years'
-FROM "BasicTypesEntities" AS b
+"""
+SELECT DATE_ADD(`b`.`DateTimeOffset`, INTERVAL CAST(1 AS signed) year)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -160,9 +160,9 @@ FROM "BasicTypesEntities" AS b
         await base.AddMonths();
 
         AssertSql(
-            """
-SELECT b."DateTimeOffset" + INTERVAL '1 months'
-FROM "BasicTypesEntities" AS b
+"""
+SELECT DATE_ADD(`b`.`DateTimeOffset`, INTERVAL CAST(1 AS signed) month)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -171,9 +171,9 @@ FROM "BasicTypesEntities" AS b
         await base.AddDays();
 
         AssertSql(
-            """
-SELECT b."DateTimeOffset" + INTERVAL '1 days'
-FROM "BasicTypesEntities" AS b
+"""
+SELECT DATE_ADD(`b`.`DateTimeOffset`, INTERVAL CAST(1.0 AS signed) day)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -182,9 +182,9 @@ FROM "BasicTypesEntities" AS b
         await base.AddHours();
 
         AssertSql(
-            """
-SELECT b."DateTimeOffset" + INTERVAL '1 hours'
-FROM "BasicTypesEntities" AS b
+"""
+SELECT DATE_ADD(`b`.`DateTimeOffset`, INTERVAL CAST(1.0 AS signed) hour)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -193,9 +193,9 @@ FROM "BasicTypesEntities" AS b
         await base.AddMinutes();
 
         AssertSql(
-            """
-SELECT b."DateTimeOffset" + INTERVAL '1 mins'
-FROM "BasicTypesEntities" AS b
+"""
+SELECT DATE_ADD(`b`.`DateTimeOffset`, INTERVAL CAST(1.0 AS signed) minute)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -204,9 +204,9 @@ FROM "BasicTypesEntities" AS b
         await base.AddSeconds();
 
         AssertSql(
-            """
-SELECT b."DateTimeOffset" + INTERVAL '1 secs'
-FROM "BasicTypesEntities" AS b
+"""
+SELECT DATE_ADD(`b`.`DateTimeOffset`, INTERVAL CAST(1.0 AS signed) second)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -215,9 +215,9 @@ FROM "BasicTypesEntities" AS b
         await base.AddMilliseconds();
 
         AssertSql(
-            """
-SELECT b."DateTimeOffset"
-FROM "BasicTypesEntities" AS b
+"""
+SELECT DATE_ADD(`b`.`DateTimeOffset`, INTERVAL 1000 * CAST(300.0 AS signed) microsecond)
+FROM `BasicTypesEntities` AS `b`
 """);
     }
 
@@ -232,10 +232,10 @@ FROM "BasicTypesEntities" AS b
         await base.Milliseconds_parameter_and_constant();
 
         AssertSql(
-            """
-SELECT count(*)::int
-FROM "BasicTypesEntities" AS b
-WHERE b."DateTimeOffset" = TIMESTAMPTZ '1902-01-02T10:00:00.123456+01:30'
+"""
+SELECT COUNT(*)
+FROM `BasicTypesEntities` AS `b`
+WHERE `b`.`DateTimeOffset` = TIMESTAMP '1902-01-02 08:30:00.123456'
 """);
     }
 
