@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.TestModels.Northwind;
 using Microsoft.EntityFrameworkCore.TestUtilities;
 using MySqlConnector;
+using Pomelo.EntityFrameworkCore.MySql.FunctionalTests.TestUtilities;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Tests;
 using Pomelo.EntityFrameworkCore.MySql.Tests.TestUtilities.Attributes;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.Query
 {
@@ -28,162 +28,6 @@ namespace Pomelo.EntityFrameworkCore.MySql.FunctionalTests.Query
         {
             ClearLog();
             //Fixture.TestSqlLoggerFactory.SetTestOutputHelper(testOutputHelper);
-        }
-
-        public override async Task Select_bitwise_or(bool async)
-        {
-            await base.Select_bitwise_or(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, `c`.`CustomerID` IN ('ALFKI', 'ANATR') AS `Value`
-FROM `Customers` AS `c`
-ORDER BY `c`.`CustomerID`
-""");
-        }
-
-        public override async Task Select_bitwise_or_multiple(bool async)
-        {
-            await base.Select_bitwise_or_multiple(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, `c`.`CustomerID` IN ('ALFKI', 'ANATR', 'ANTON') AS `Value`
-FROM `Customers` AS `c`
-ORDER BY `c`.`CustomerID`
-""");
-        }
-
-        public override async Task Select_bitwise_and(bool async)
-        {
-            await base.Select_bitwise_and(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, FALSE AS `Value`
-FROM `Customers` AS `c`
-ORDER BY `c`.`CustomerID`
-""");
-        }
-
-        public override async Task Select_bitwise_and_or(bool async)
-        {
-            await base.Select_bitwise_and_or(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, `c`.`CustomerID` = 'ANTON' AS `Value`
-FROM `Customers` AS `c`
-ORDER BY `c`.`CustomerID`
-""");
-        }
-
-        public override async Task Where_bitwise_or_with_logical_or(bool async)
-        {
-            await base.Where_bitwise_or_with_logical_or(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
-FROM `Customers` AS `c`
-WHERE `c`.`CustomerID` IN ('ALFKI', 'ANATR', 'ANTON')
-""");
-        }
-
-        public override async Task Where_bitwise_and_with_logical_and(bool async)
-        {
-            await base.Where_bitwise_and_with_logical_and(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
-FROM `Customers` AS `c`
-WHERE FALSE
-""");
-        }
-
-        public override async Task Where_bitwise_or_with_logical_and(bool async)
-        {
-            await base.Where_bitwise_or_with_logical_and(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
-FROM `Customers` AS `c`
-WHERE `c`.`CustomerID` IN ('ALFKI', 'ANATR') AND (`c`.`Country` = 'Germany')
-""");
-        }
-
-        public override async Task Where_bitwise_and_with_logical_or(bool async)
-        {
-            await base.Where_bitwise_and_with_logical_or(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, `c`.`Address`, `c`.`City`, `c`.`CompanyName`, `c`.`ContactName`, `c`.`ContactTitle`, `c`.`Country`, `c`.`Fax`, `c`.`Phone`, `c`.`PostalCode`, `c`.`Region`
-FROM `Customers` AS `c`
-WHERE `c`.`CustomerID` = 'ANTON'
-""");
-        }
-
-        public override async Task Where_bitwise_binary_not(bool async)
-        {
-            await base.Where_bitwise_binary_not(async);
-
-            AssertSql(
-                @"@__negatedId_0='-10249'
-
-SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`
-FROM `Orders` AS `o`
-WHERE CAST(~`o`.`OrderID` AS signed) = @__negatedId_0");
-        }
-
-        public override async Task Where_bitwise_binary_and(bool async)
-        {
-            await base.Where_bitwise_binary_and(async);
-
-            AssertSql(
-"""
-SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`
-FROM `Orders` AS `o`
-WHERE CAST(`o`.`OrderID` & 10248 AS signed) = 10248
-""");
-        }
-
-        public override async Task Where_bitwise_binary_or(bool async)
-        {
-            await base.Where_bitwise_binary_or(async);
-
-            AssertSql(
-"""
-SELECT `o`.`OrderID`, `o`.`CustomerID`, `o`.`EmployeeID`, `o`.`OrderDate`
-FROM `Orders` AS `o`
-WHERE CAST(`o`.`OrderID` | 10248 AS signed) = 10248
-""");
-        }
-
-        public override async Task Select_bitwise_or_with_logical_or(bool async)
-        {
-            await base.Select_bitwise_or_with_logical_or(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, `c`.`CustomerID` IN ('ALFKI', 'ANATR', 'ANTON') AS `Value`
-FROM `Customers` AS `c`
-ORDER BY `c`.`CustomerID`
-""");
-        }
-
-        public override async Task Select_bitwise_and_with_logical_and(bool async)
-        {
-            await base.Select_bitwise_and_with_logical_and(async);
-
-        AssertSql(
-"""
-SELECT `c`.`CustomerID`, FALSE AS `Value`
-FROM `Customers` AS `c`
-ORDER BY `c`.`CustomerID`
-""");
         }
 
         [ConditionalTheory]
@@ -509,6 +353,10 @@ ORDER BY `o0`.`CustomerID`, `o1`.`OrderID`
         {
             return base.DefaultIfEmpty_Sum_over_collection_navigation(async);
         }
+
+        [ConditionalFact]
+        public virtual void Check_all_tests_overridden()
+            => MySqlTestHelpers.AssertAllMethodsOverridden(GetType());
 
         private void AssertSql(params string[] expected)
             => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);

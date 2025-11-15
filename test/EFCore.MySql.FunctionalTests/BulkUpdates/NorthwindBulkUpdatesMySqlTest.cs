@@ -530,9 +530,9 @@ INNER JOIN (
 """);
     }
 
-    public override async Task Delete_with_left_join(bool async)
+    public override async Task Delete_with_LeftJoin(bool async)
     {
-        await base.Delete_with_left_join(async);
+        await base.Delete_with_LeftJoin(async);
 
         AssertSql(
 """
@@ -1086,13 +1086,6 @@ WHERE `c`.`CustomerID` LIKE 'F%'
         AssertExecuteUpdateSql();
     }
 
-    public override async Task Update_with_invalid_lambda_throws(bool async)
-    {
-        await base.Update_with_invalid_lambda_throws(async);
-
-        AssertExecuteUpdateSql();
-    }
-
     public override async Task Update_Where_multiple_set(bool async)
     {
         await base.Update_Where_multiple_set(async);
@@ -1219,9 +1212,9 @@ WHERE `c`.`CustomerID` LIKE 'F%'
 """);
     }
 
-    public override async Task Update_with_left_join_set_constant(bool async)
+    public override async Task Update_with_LeftJoin(bool async)
     {
-        await base.Update_with_left_join_set_constant(async);
+        await base.Update_with_LeftJoin(async);
 
         AssertExecuteUpdateSql(
 """
